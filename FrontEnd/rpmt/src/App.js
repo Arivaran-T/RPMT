@@ -3,14 +3,14 @@ import { BrowserRouter as Router } from "react-router-dom";
 import { useState } from "react";
 
 //import pages
-import SignIn from "./Pages/Auth/SignIn";
+import SignIn from "./Pages/Auth/SignIn/SignIn";
 import Header from "./Components/Header";
 import "./App.css";
 
 //mui
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@emotion/react";
-import { deepOrange, grey } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 
 function App() {
   const [mode, setMode] = useState("light");
@@ -22,11 +22,11 @@ function App() {
         ? {
             // palette values for light mode
             primary: {
-              main: "#e28743",
+              main: "#E28743",
             },
             background: {
               default: "#e28743",
-              paper: "#e28743",
+              paper: "#fff",
             },
             secondary: {
               main: "#073050",
@@ -48,7 +48,7 @@ function App() {
             // divider: deepOrange[700],
             background: {
               default: "#073050",
-              paper: "#073050",
+              paper: "#273443",
             },
             text: {
               primary: "#fff",
@@ -68,7 +68,7 @@ function App() {
       <Router>
         <Header handler={modeHandler} />
         <Routes>
-          <Route path="/auth/sign-in" exact component={SignIn} />
+          <Route path="/auth/sign-in" exact element={<SignIn />} />
         </Routes>
       </Router>
     </ThemeProvider>

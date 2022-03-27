@@ -2,8 +2,6 @@ import { useState } from "react";
 import {
   Box,
   AppBar,
-  Paper,
-  Container,
   Toolbar,
   IconButton,
   Badge,
@@ -11,6 +9,7 @@ import {
   MenuItem,
   Tooltip,
   Button,
+  Link,
 } from "@mui/material";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
@@ -20,14 +19,14 @@ import MailIcon from "@mui/icons-material/Mail";
 import logo from "../Assets/logo.png";
 
 function Header(props) {
-  const [auth, setAuth] = useState(true);
+  const [auth, setAuth] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
   const [mode, setMode] = useState("light");
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-
+  console.log(mode);
   props.handler(mode);
 
   const handleMenu = (event) => {
@@ -61,14 +60,16 @@ function Header(props) {
           {/* before auth */}
           {!auth && (
             <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "flex" } }}>
-              <Button
-                key={"login"}
-                // onClick={handleCloseNavMenu}
-                color="secondary"
-                // sx={{ my: 2, display: "block" }}
-              >
-                Log In
-              </Button>
+              <Link href="/auth/sign-in">
+                <Button
+                  key={"login"}
+                  // onClick={handleCloseNavMenu}
+                  color="secondary"
+                  // sx={{ my: 2, display: "block" }}
+                >
+                  Log In
+                </Button>
+              </Link>
               <Button
                 key={"login"}
                 // onClick={handleCloseNavMenu}
@@ -135,9 +136,6 @@ function Header(props) {
           )}
         </Toolbar>
       </AppBar>
-      <Paper square={true}>
-        <Container></Container>
-      </Paper>
     </Box>
   );
 }
