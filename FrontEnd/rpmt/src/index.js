@@ -1,14 +1,32 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from "react";
+import ReactDOM from "react-dom";
+import "./index.css";
+import App from "./App";
+import reportWebVitals from "./reportWebVitals";
 
+//material ui
+import { createTheme } from "@mui/material/styles";
+import { ThemeProvider } from "@emotion/react";
+
+const theme = createTheme({
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#e28743",
+    },
+    secondary: {
+      main: "#e28743",
+    },
+  },
+});
+//#2596be
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
   </React.StrictMode>,
-  document.getElementById('root')
+  document.getElementById("root")
 );
 
 // If you want to start measuring performance in your app, pass a function
