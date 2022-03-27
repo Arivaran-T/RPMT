@@ -4,27 +4,9 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 
-//material ui
-import { createTheme } from "@mui/material/styles";
-import { ThemeProvider } from "@emotion/react";
-
-const theme = createTheme({
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#e28743",
-    },
-    secondary: {
-      main: "#e28743",
-    },
-  },
-});
-//#2596be
 ReactDOM.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
+    <App />
   </React.StrictMode>,
   document.getElementById("root")
 );
