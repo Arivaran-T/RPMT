@@ -32,6 +32,7 @@ function App() {
               main: "#073050",
             },
             // divider: amber[200],
+            button: "#E28743",
             text: {
               primary: "#073050",
               secondary: "#073050",
@@ -59,7 +60,6 @@ function App() {
   });
 
   const modeHandler = (value) => {
-    console.log(value);
     setMode(value);
   };
 

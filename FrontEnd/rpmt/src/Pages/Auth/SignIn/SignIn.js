@@ -13,7 +13,7 @@ const useStyles = makeStyles({
     margin: "0",
   },
   card: {
-    backgroundColor: "#DFDADA",
+    backgroundColor: "#ddd",
   },
   paperCard: {
     height: "100%",
@@ -26,11 +26,17 @@ function SignIn() {
   return (
     <Paper square elevation={0}>
       <Box className={classes.container1}>
-        <Grid justifyContent="center" container spacing={0}>
+        <Grid
+          justifyContent="center"
+          alignItems="stretch"
+          direction="row"
+          container
+          spacing={0}
+        >
           <Grid item xs={1} sm={1} md={1} lg={2}></Grid>
           <Grid item className={classes.card} xs={10} sm={6} md={7} lg={5}>
             <Paper className={classes.paperCard} square elevation={4}>
-            <Form />
+              <Form />
             </Paper>
           </Grid>
           <Grid
@@ -49,9 +55,7 @@ function SignIn() {
               />
             </Paper>
           </Grid>
-          <Grid xs={1} sm={1} md={1} lg={2} display={{ xs: "block" }}>
-            
-          </Grid>
+          <Grid xs={1} sm={1} md={1} lg={2}></Grid>
           <Grid
             className={classes.card}
             item
