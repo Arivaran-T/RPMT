@@ -40,23 +40,27 @@ function Header(props) {
           <img alt="dd" src={logo} width="100px" />
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}></Box>
-          <IconButton
-            size="large"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            // onClick={handleMenu}
-            color="inherit"
-            onClick={() => {
-              setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-              props.handler(mode);
-            }}
-          >
-            {mode === "light" ? (
-              <DarkModeIcon fontSize="inherit" />
-            ) : (
-              <LightModeIcon fontSize="inherit" />
-            )}
-          </IconButton>
+          <Tooltip title={mode === "dark" ? "light theme":"dark theme"}>
+            <IconButton
+              size="large"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              // onClick={handleMenu}
+              color="inherit"
+              onClick={() => {
+                setMode((prevMode) =>
+                  prevMode === "light" ? "dark" : "light"
+                );
+                props.handler(mode);
+              }}
+            >
+              {mode === "light" ? (
+                <DarkModeIcon fontSize="inherit" />
+              ) : (
+                <LightModeIcon fontSize="inherit" />
+              )}
+            </IconButton>
+          </Tooltip>
 
           {!auth && (
             <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "flex" } }}>
@@ -74,11 +78,12 @@ function Header(props) {
           {/*user profile*/}
           {auth && (
             <div>
+              <Tooltip title={"Chat"}>
               <IconButton size="large" color="inherit">
                 <Badge badgeContent={1} color="error">
                   <MailIcon fontSize="inherit" />
                 </Badge>
-              </IconButton>
+              </IconButton></Tooltip>
               <Tooltip title="profile">
                 <IconButton size="large" onClick={handleMenu} color="inherit">
                   <AccountCircle fontSize="inherit" />

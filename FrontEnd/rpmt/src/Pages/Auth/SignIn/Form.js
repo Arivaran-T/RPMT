@@ -76,7 +76,7 @@ function SignInForm() {
                 href="/"
                 style={{ textTransform: "lowercase" }}
                 variant="text"
-                // color="#064663"
+                color="info"
               >
                 forget password?
               </Button>
@@ -87,7 +87,7 @@ function SignInForm() {
               fullWidth
               size="medium"
               variant="contained"
-              color="primary"
+              color="success"
               className={classes.button_margin}
             >
               Sign In

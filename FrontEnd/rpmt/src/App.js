@@ -1,10 +1,11 @@
 import { Route, Routes } from "react-router";
 import { BrowserRouter as Router } from "react-router-dom";
 import { useState } from "react";
+import { Navigate } from "react-router-dom";
 
 //import pages
 import SignIn from "./Pages/Auth/SignIn/SignIn";
-import SignUp from "./Pages/Auth/SignUp/SignIn";
+import SignUp from "./Pages/Auth/SignUp/SignUp";
 import "./App.css";
 
 //mui
@@ -41,13 +42,19 @@ function App() {
               paper: "#fff",
               button: "#073050",
             },
+            divider: "#073050",
             secondary: {
               main: "#073050",
             },
-            divider: amber[200],
             text: {
               primary: "#073050",
               secondary: "#073050",
+            },
+            success: {
+              main: "#073050",
+            },
+            info: {
+              main: "#1597BB",
             },
           }
         : {
@@ -57,7 +64,7 @@ function App() {
             secondary: {
               main: "#064663",
             },
-            // divider: deepOrange[700],
+            divider: "#E28743",
             background: {
               default: "#073050",
               paper: "#273443",
@@ -79,6 +86,12 @@ function App() {
             typography: {
               primary: "#fff",
               fontSize: 12,
+            },
+            success: {
+              main: "#ECB365",
+            },
+            info: {
+              main: "#aaa",
             },
           }),
     },
@@ -116,11 +129,20 @@ function App() {
         <Router>
           <Routes>
             <Route
+              exact
+              path="/"
+              element={<Navigate replace to="/auth/sign-in" />}
+            />
+
+            <Route
               path="/auth/sign-in"
               exact
               element={<SignIn handler={modeHandler} />}
             />
-            <Route path="/auth/sign-up" element={<SignUp />} />
+            <Route
+              path="/auth/sign-up"
+              element={<SignUp handler={modeHandler} />}
+            />
           </Routes>
         </Router>
       </ThemeProvider>

@@ -1,4 +1,4 @@
-import image from "../../../Assets/login_img.jpg";
+import image from "../../../Assets/login_img1.jpg";
 
 //mui
 import { Card, CardMedia, Typography } from "@mui/material";

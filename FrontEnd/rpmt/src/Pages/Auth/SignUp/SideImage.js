@@ -1,8 +1,8 @@
-import image from "../../../Assets/login_img.jpg";
+import image from "../../../Assets/login_img1.jpg";
 
 //mui
-import { Card, CardMedia, Typography } from "@material-ui/core";
-import { makeStyles } from "@material-ui/core";
+import { Card, CardMedia, Typography } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 import { Button } from "@mui/material";
 
 const useStyle = makeStyles({
@@ -11,6 +11,7 @@ const useStyle = makeStyles({
   },
   sub: {
     fontFamily: "Arial",
+    fontWeight: "600",
   },
 });
 
@@ -21,14 +22,13 @@ function SideImage(props) {
     <Card raised>
       <div style={{ position: "relative", width: "100%", height: "100%" }}>
         <CardMedia
-          style={{ height: "100%", paddingTop: "0", objectFit: "cover" }}
+          style={{ height: props.heights, paddingTop: "0" }}
           component="img"
           image={image}
         />
         <div
           style={{
             position: "absolute",
-            color: "white",
             top: "3rem",
             width: "100%",
             textAlign: "center",
@@ -40,7 +40,7 @@ function SideImage(props) {
           <Typography className={classes.heading} variant="h4">
             {props.heading}
           </Typography>
-          <Typography className={classes.sub} variant="h6">
+          <Typography className={classes.sub} variant="subtitle1">
             {props.subheading}
           </Typography>
         </div>
@@ -48,15 +48,15 @@ function SideImage(props) {
           style={{
             position: "absolute",
             color: "white",
-            top: "90%",
+            top: "92%",
             width: "100%",
             textAlign: "center",
             margin: "auto",
             height: "50%",
           }}
         >
-          <Button color="secondary" variant="outlined">
-            SIGN UP
+          <Button color="secondary" variant="contained">
+            SIGN IN
           </Button>
         </div>
       </div>

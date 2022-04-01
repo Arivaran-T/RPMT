@@ -54,8 +54,9 @@ function SignIn(props) {
             >
               <Paper>
                 <SideImage
-                  heading="New here?"
-                  subheading="Signup and continue your research!"
+                  heights={"49rem"}
+                  heading="Alredy here?"
+                  subheading="Log in and continue your research!"
                 />
               </Paper>
             </Grid>
@@ -67,8 +68,9 @@ function SignIn(props) {
               display={{ xs: "block", sm: "none" }}
             >
               <SideImage
-                heading="New here?"
-                subheading="Signup and continue your research!"
+                heights={"37rem"}
+                heading="Alredy here?"
+                subheading="Log in and continue your research!"
               />
             </Grid>
           </Grid>
