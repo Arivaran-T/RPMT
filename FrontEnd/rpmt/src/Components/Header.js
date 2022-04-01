@@ -19,14 +19,14 @@ import MailIcon from "@mui/icons-material/Mail";
 import logo from "../Assets/logo.png";
 
 function Header(props) {
-  const [auth, setAuth] = useState(false);
+  const [auth, setAuth] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const [mode, setMode] = useState("light");
 
   const handleClose = () => {
     setAnchorEl(null);
   };
-  console.log(mode);
+
   props.handler(mode);
 
   const handleMenu = (event) => {
@@ -39,43 +39,37 @@ function Header(props) {
         <Toolbar>
           <img alt="dd" src={logo} width="100px" />
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            // onClick={handleMenu}
-            color="inherit"
-            onClick={() => {
-              setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
-              props.handler(mode);
-            }}
-          >
-            {mode === "light" ? (
-              <DarkModeIcon fontSize="inherit" />
-            ) : (
-              <LightModeIcon fontSize="inherit" />
-            )}
-          </IconButton>
-          {/* before auth */}
+          <Box sx={{ display: { xs: "none", md: "flex" } }}></Box>
+          <Tooltip title={mode === "dark" ? "light theme" : "dark theme"}>
+            <IconButton
+              size="large"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              // onClick={handleMenu}
+              color="inherit"
+              onClick={() => {
+                setMode((prevMode) =>
+                  prevMode === "light" ? "dark" : "light"
+                );
+                props.handler(mode);
+              }}
+            >
+              {mode === "light" ? (
+                <DarkModeIcon fontSize="inherit" />
+              ) : (
+                <LightModeIcon fontSize="inherit" />
+              )}
+            </IconButton>
+          </Tooltip>
+
           {!auth && (
             <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "flex" } }}>
               <Link href="/auth/sign-in">
-                <Button
-                  key={"login"}
-                  // onClick={handleCloseNavMenu}
-                  color="secondary"
-                  // sx={{ my: 2, display: "block" }}
-                >
+                <Button key={"login"} color="info">
                   Log In
                 </Button>
               </Link>
-              <Button
-                key={"login"}
-                // onClick={handleCloseNavMenu}
-                color="secondary"
-                // sx={{ my: 2, display: "block" }}
-              >
+              <Button key={"signup"} color="info">
                 Sign up
               </Button>
             </Box>
@@ -84,25 +78,15 @@ function Header(props) {
           {/*user profile*/}
           {auth && (
             <div>
-              <IconButton
-                size="large"
-                aria-label="show 4 new mails"
-                color="inherit"
-              >
-                <Badge badgeContent={1} color="error">
-                  <MailIcon fontSize="inherit" />
-                </Badge>
-              </IconButton>
-
+              <Tooltip title={"Chat"}>
+                <IconButton size="large" color="inherit">
+                  <Badge badgeContent={1} color="error">
+                    <MailIcon fontSize="inherit" />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
               <Tooltip title="profile">
-                <IconButton
-                  size="large"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  color="inherit"
-                >
+                <IconButton size="large" onClick={handleMenu} color="inherit">
                   <AccountCircle fontSize="inherit" />
                 </IconButton>
               </Tooltip>

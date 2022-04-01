@@ -1,12 +1,6 @@
 //mui
-import {
-  makeStyles,
-  Typography,
-  TextField,
-  FormControl,
-  Grid,
-  Button,
-} from "@material-ui/core";
+import { Typography, TextField, Grid, Button, Box } from "@mui/material";
+import { makeStyles } from "@mui/styles";
 
 const useStyle = makeStyles({
   container: {
@@ -19,68 +13,91 @@ const useStyle = makeStyles({
     marginBottom: "3rem",
   },
   form_conatiner: {
-    padding: "2rem",
+    padding: "4rem",
   },
   input_margin: {
-    marginTop: "3%",
-    marginBottom: "3%",
+    padding: "0",
   },
   button_margin: {
-    marginTop: "5%",
-    marginBottom: "10%",
+    marginTop: "5",
+    marginBottom: "10",
   },
 });
-
-// const submitHandler = () => {};
 
 function SignInForm() {
   const classes = useStyle();
   return (
-    <Grid container justifyContent="center" spacing={0}>
-      <Grid item xs={1}></Grid>
-      <Grid item xs={10}>
-        {/* <FormControl fullWidth margin="normal" variant="outlined"> */}
-        <Typography className={classes.heading} variant="h3" align="center">
-          Welcome Back,
-        </Typography>
-        <TextField
-          fullWidth
-          className={classes.input_margin}
-          margin="normal"
-          id="email"
-          label="Email"
-          variant="outlined"
-        />
-        <TextField
-          fullWidth
-          className={classes.input_margin}
-          margin="normal"
-          id="Password"
-          label="Password"
-          variant="outlined"
-        />
-        <Typography align="right">
-          <Button
-            href="/"
-            style={{ textTransform: "lowercase" }}
-            variant="text"
+    <Box height={{ sm: "35rem", md: "35rem" }}>
+      <Grid
+        sx={{ height: "100%" }}
+        container
+        alignContent="center"
+        justifyContent="center"
+        spacing={0}
+      >
+        <Grid item xs={1}></Grid>
+        <Grid item xs={10}>
+          {/* <FormControl fullWidth margin="normal" variant="outlined"> */}
+          <Typography
+            mt={3}
+            mb={2}
+            className={classes.heading}
+            variant="h3"
+            align="center"
           >
-            forget password?
-          </Button>
-        </Typography>
-        <Button
-          fullWidth
-          size="medium"
-          variant="contained"
-          color="secondary"
-          className={classes.button_margin}
-        >
-          Sign In
-        </Button>
-        {/* </FormControl> */}
+            Welcome Back,
+          </Typography>
+          <Box mb={1}>
+            <TextField
+              mt={4}
+              color="primary"
+              fullWidth
+              className={classes.input_margin}
+              margin="normal"
+              id="email"
+              label="Email"
+              variant="outlined"
+              size="medium"
+            />
+          </Box>
+          <TextField
+            mt={4}
+            fullWidth
+            className={classes.input_margin}
+            margin="normal"
+            id="Password"
+            label="Password"
+            variant="outlined"
+            size="medium"
+          />
+          <Typography align="right">
+            <Box mt={1} mb={1}>
+              <Button
+                href="/"
+                style={{ textTransform: "lowercase" }}
+                variant="text"
+                color="info"
+              >
+                forget password?
+              </Button>
+            </Box>
+          </Typography>
+          <Box mt={2} mb={3}>
+            <Button
+              fullWidth
+              size="medium"
+              variant="contained"
+              color="success"
+              className={classes.button_margin}
+            >
+              Sign In
+            </Button>
+          </Box>
+          {/* </FormControl> */}
+        </Grid>
+        <Grid item xs={1}></Grid>
       </Grid>
-      <Grid item xs={1}></Grid>
-    </Grid>
+    </Box>
   );
 }
 
