@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 //import pages
 import SignIn from "./Pages/Auth/SignIn/SignIn";
 import SignUp from "./Pages/Auth/SignUp/SignUp";
+import Footer from "./Components/Footer";
 import "./App.css";
 
 //mui
@@ -117,6 +118,15 @@ function App() {
       fontSize: "2.4rem",
     },
   };
+  // theme1.typography.caption = {
+  //   fontSize: ".5rem",
+  //   "@media (min-width:600px)": {
+  //     fontSize: "1rem",
+  //   },
+  //   [theme1.breakpoints.up("md")]: {
+  //     fontSize: "1.4rem",
+  //   },
+  // };
 
   const modeHandler = (value) => {
     setMode(value);
@@ -145,6 +155,7 @@ function App() {
             />
           </Routes>
         </Router>
+        <Footer />
       </ThemeProvider>
     </div>
   );

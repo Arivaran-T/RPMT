@@ -40,7 +40,7 @@ function Header(props) {
           <img alt="dd" src={logo} width="100px" />
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}></Box>
-          <Tooltip title={mode === "dark" ? "light theme":"dark theme"}>
+          <Tooltip title={mode === "dark" ? "light theme" : "dark theme"}>
             <IconButton
               size="large"
               aria-controls="menu-appbar"
@@ -65,11 +65,11 @@ function Header(props) {
           {!auth && (
             <Box sx={{ flexGrow: 0, display: { xs: "flex", md: "flex" } }}>
               <Link href="/auth/sign-in">
-                <Button key={"login"} color="secondary">
+                <Button key={"login"} color="info">
                   Log In
                 </Button>
               </Link>
-              <Button key={"login"} color="secondary">
+              <Button key={"signup"} color="info">
                 Sign up
               </Button>
             </Box>
@@ -79,11 +79,12 @@ function Header(props) {
           {auth && (
             <div>
               <Tooltip title={"Chat"}>
-              <IconButton size="large" color="inherit">
-                <Badge badgeContent={1} color="error">
-                  <MailIcon fontSize="inherit" />
-                </Badge>
-              </IconButton></Tooltip>
+                <IconButton size="large" color="inherit">
+                  <Badge badgeContent={1} color="error">
+                    <MailIcon fontSize="inherit" />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
               <Tooltip title="profile">
                 <IconButton size="large" onClick={handleMenu} color="inherit">
                   <AccountCircle fontSize="inherit" />

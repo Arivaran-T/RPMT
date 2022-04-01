@@ -55,7 +55,7 @@ function SideImage(props) {
             height: "50%",
           }}
         >
-          <Button color="secondary" variant="contained">
+          <Button href="/auth/sign-in" color="secondary" variant="contained">
             SIGN IN
           </Button>
         </div>
