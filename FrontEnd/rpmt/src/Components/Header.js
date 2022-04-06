@@ -15,13 +15,14 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import MailIcon from "@mui/icons-material/Mail";
+import MessageIcon from "@mui/icons-material/Message";
 
 import logo from "../Assets/logo.png";
 
 function Header(props) {
   const [auth, setAuth] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [mode, setMode] = useState("light");
+  const [mode, setMode] = useState(props.mode);
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -79,9 +80,9 @@ function Header(props) {
           {auth && (
             <div>
               <Tooltip title={"Chat"}>
-                <IconButton size="large" color="inherit">
+                <IconButton href="/chat" size="large" color="inherit">
                   <Badge badgeContent={1} color="error">
-                    <MailIcon fontSize="inherit" />
+                    <MessageIcon fontSize="inherit" />
                   </Badge>
                 </IconButton>
               </Tooltip>

@@ -1,4 +1,4 @@
-import { Toolbar, Paper, Typography, Box, Button, Grid } from "@mui/material";
+import { Toolbar, Paper, Typography, Box, Button } from "@mui/material";
 import MessageIcon from "@mui/icons-material/Message";
 
 function Footer() {

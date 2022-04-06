@@ -37,9 +37,8 @@ function SignInForm() {
       >
         <Grid item xs={1}></Grid>
         <Grid item xs={10}>
-          {/* <FormControl fullWidth margin="normal" variant="outlined"> */}
           <Typography
-            mt={3}
+            mt={2}
             mb={2}
             className={classes.heading}
             variant="h3"
