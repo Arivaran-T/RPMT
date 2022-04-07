@@ -18,12 +18,12 @@ function Chat(props) {
           spacing={0}
         >
           <Grid item xs={1} sm={1} lg={2}></Grid>
-          <Grid item display={{ xs: "none", sm: "block" }} xs={0} sm={3} lg={2}>
+          <Grid  sx={{
+                backgroundColor:"#555"
+              }} item display={{ xs: "none", sm: "block" }} xs={0} sm={3} lg={2}>
             <Box
-              elevation={2}
               sx={{
                 height: 550,
-                backgroundColor: "#05243C",
               }}
               style={{
                 maxHeight: 550,
@@ -31,6 +31,11 @@ function Chat(props) {
                 overflow: "auto",
               }}
             >
+              <SideBar />
+              <SideBar />
+              <SideBar />
+              <SideBar />
+              <SideBar />
               <SideBar />
               <SideBar />
               <SideBar />

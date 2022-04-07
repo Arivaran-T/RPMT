@@ -111,12 +111,12 @@ function App() {
     },
   };
   theme1.typography.h4 = {
-    fontSize: "1.2rem",
+    fontSize: ".6rem",
     "@media (min-width:600px)": {
-      fontSize: "1.5rem",
+      fontSize: ".75rem",
     },
     [theme1.breakpoints.up("md")]: {
-      fontSize: "2.4rem",
+      fontSize: "1rem",
     },
   };
   // theme1.typography.caption = {
