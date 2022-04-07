@@ -8,6 +8,7 @@ import SignIn from "./Pages/Auth/SignIn/SignIn";
 import SignUp from "./Pages/Auth/SignUp/SignUp";
 import Footer from "./Components/Footer";
 import "./App.css";
+import Chat from "./Pages/Chat/Std-Chat/Chat";
 
 //mui
 import {
@@ -15,7 +16,6 @@ import {
   createTheme,
   responsiveFontSizes,
 } from "@mui/material/styles";
-import { amber } from "@material-ui/core/colors";
 
 function App() {
   const [mode, setMode] = useState("light");
@@ -34,6 +34,7 @@ function App() {
             primary: {
               main: "#E28743",
               button: "#bbb",
+              dark:"#073050"//change
             },
             status: {
               danger: "#E28743",
@@ -43,7 +44,7 @@ function App() {
               paper: "#fff",
               button: "#073050",
             },
-            divider: "#073050",
+            divider: "#116BB1",
             secondary: {
               main: "#073050",
             },
@@ -110,12 +111,12 @@ function App() {
     },
   };
   theme1.typography.h4 = {
-    fontSize: "1.2rem",
+    fontSize: ".6rem",
     "@media (min-width:600px)": {
-      fontSize: "1.5rem",
+      fontSize: ".75rem",
     },
     [theme1.breakpoints.up("md")]: {
-      fontSize: "2.4rem",
+      fontSize: "1rem",
     },
   };
   // theme1.typography.caption = {
@@ -132,7 +133,6 @@ function App() {
     setMode(value);
   };
 
-  console.log(mode);
   return (
     <div>
       <ThemeProvider theme={theme1}>
@@ -147,11 +147,15 @@ function App() {
             <Route
               path="/auth/sign-in"
               exact
-              element={<SignIn handler={modeHandler} />}
+              element={<SignIn mode={mode} handler={modeHandler} />}
             />
             <Route
               path="/auth/sign-up"
-              element={<SignUp handler={modeHandler} />}
+              element={<SignUp mode={mode} handler={modeHandler} />}
+            />
+            <Route
+              path="/chat"
+              element={<Chat mode={mode} handler={modeHandler} />}
             />
           </Routes>
         </Router>

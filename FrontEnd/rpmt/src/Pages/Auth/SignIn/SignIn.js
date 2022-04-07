@@ -27,7 +27,7 @@ function SignIn(props) {
 
   return (
     <>
-      <Header handler={props.handler} />
+      <Header mode={props.mode} handler={props.handler} />
       <Paper className={classes.paperContainer} square elevation={0}>
         <Box className={classes.container1}>
           <Grid
