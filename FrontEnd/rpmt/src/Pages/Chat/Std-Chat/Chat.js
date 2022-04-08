@@ -9,8 +9,9 @@ function Chat(props) {
   return (
     <>
       <Header mode={props.mode} handler={props.handler} />
-      <Box my={4}>
+      <Paper elevation={2} square>
         <Grid
+          py={4}
           container
           direction="row"
           justifyContent="center"
@@ -18,9 +19,16 @@ function Chat(props) {
           spacing={0}
         >
           <Grid item xs={1} sm={1} lg={2}></Grid>
-          <Grid  sx={{
-                backgroundColor:"#555"
-              }} item display={{ xs: "none", sm: "block" }} xs={0} sm={3} lg={2}>
+          <Grid
+            sx={{
+              backgroundColor: "#555",
+            }}
+            item
+            display={{ xs: "none", sm: "block" }}
+            xs={0}
+            sm={3}
+            lg={2}
+          >
             <Box
               sx={{
                 height: 550,
@@ -36,18 +44,13 @@ function Chat(props) {
               <SideBar />
               <SideBar />
               <SideBar />
-              <SideBar />
-              <SideBar />
-              <SideBar />
-              <SideBar />
-              <SideBar />
+    
             </Box>
           </Grid>
           <Grid item xs={10} sm={7} lg={6}>
             <Box
               sx={{
                 height: 550,
-                backgroundColor: "#073050",
               }}
             >
               <ChatBox />
@@ -55,7 +58,7 @@ function Chat(props) {
           </Grid>
           <Grid item xs={1} sm={1} lg={2}></Grid>
         </Grid>
-      </Box>
+      </Paper>
     </>
   );
 }

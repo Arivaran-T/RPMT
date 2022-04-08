@@ -1,3 +1,4 @@
+//mui
 import {
   Toolbar,
   Avatar,
@@ -15,7 +16,8 @@ import SendIcon from "@mui/icons-material/Send";
 
 //react
 import { useState } from "react";
-import { borderRadius } from "@mui/system";
+import RightMessage from "./RightMessage";
+import LeftMessage from "./LeftMessage";
 
 function ChatBox() {
   const [isOpen, setOpen] = useState(false);
@@ -69,39 +71,50 @@ function ChatBox() {
   return (
     <>
       <TopBar />
-      {/* <Box height={500} sx={{ backgroundColor: "red" }} p={0} m={0}> */}
-      <Grid sx={{ height: "88.5%" }} container direction="column">
-        <Box sx={{ flexGrow: 1 }}>
-          <Grid item xs={11}></Grid>
-        </Box>
-
-        <Grid item xs={1}>
-          <Toolbar p={0}
-            sx={{
-              backgroundColor: "#073A63",
-            }}
-          >
-            <IconButton color="info" size="large">
-              <TopicIcon color="info" fontSize="large" />
-            </IconButton>
-            <Box sx={{ flexGrow: 1 }} ml={1} />
-            <TextField
-              fullWidth
-              variant="outlined"
-              color="info"
-              size="small"
-              margin="none"
-              sx={{ backgroundColor: "#0A4C81", borderRadius: 1 }}
-            ></TextField>
-            <IconButton size="medium" >
-              <SendIcon size="large" color="info"/>
-            </IconButton>
-          </Toolbar>
-        </Grid>
-      </Grid>
-      {/* </Box> */}
+      <Box
+        sx={{ height: "76.8%", backgroundColor: "#073050", overflow: "auto" }}
+      >
+        <RightMessage />
+        <LeftMessage />
+        <RightMessage />
+        <LeftMessage />
+        <RightMessage />
+        <LeftMessage />
+        <RightMessage />
+        <LeftMessage />
+      </Box>
+      <Box sx={{ height: "12%", backgroundColor: "grey" }}>
+        <Bottom />
+      </Box>
     </>
   );
 }
+
+const Bottom = () => {
+  return (
+    <Toolbar
+      p={0}
+      sx={{
+        backgroundColor: "#073A63",
+      }}
+    >
+      <IconButton color="info" size="large">
+        <TopicIcon color="info" fontSize="large" />
+      </IconButton>
+      <Box sx={{ flexGrow: 1 }} ml={1} />
+      <TextField
+        fullWidth
+        variant="outlined"
+        color="info"
+        size="small"
+        margin="none"
+        sx={{ backgroundColor: "#0A4C81", borderRadius: 1 }}
+      ></TextField>
+      <IconButton size="medium">
+        <SendIcon size="large" color="info" />
+      </IconButton>
+    </Toolbar>
+  );
+};
 
 export default ChatBox;
