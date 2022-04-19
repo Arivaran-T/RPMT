@@ -14,15 +14,17 @@ import {
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import MailIcon from "@mui/icons-material/Mail";
 import MessageIcon from "@mui/icons-material/Message";
 
 import logo from "../Assets/logo.png";
+import { useNavigate } from "react-router-dom";
 
 function Header(props) {
   const [auth, setAuth] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
   const [mode, setMode] = useState(props.mode);
+
+  let history = useNavigate();
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -34,11 +36,17 @@ function Header(props) {
     setAnchorEl(event.currentTarget);
   };
 
+  const profilehandler = () => {
+    history("/profile");
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar color={"primary"} position="sticky">
         <Toolbar>
-          <img alt="dd" src={logo} width="100px" />
+          <Button href="/">
+            <img alt="dd" src={logo} width="100px" />
+          </Button>
           <Box sx={{ flexGrow: 1 }} />
           <Box sx={{ display: { xs: "none", md: "flex" } }}></Box>
           <Tooltip title={mode === "dark" ? "light theme" : "dark theme"}>
@@ -70,9 +78,11 @@ function Header(props) {
                   Log In
                 </Button>
               </Link>
-              <Button key={"signup"} color="info">
-                Sign up
-              </Button>
+              <Link href="/auth/sign-up">
+                <Button key={"signup"} color="info">
+                  Sign up
+                </Button>
+              </Link>
             </Box>
           )}
 
@@ -108,7 +118,7 @@ function Header(props) {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
+                <MenuItem onClick={profilehandler}>Profile</MenuItem>
                 <MenuItem
                   onClick={() => {
                     setAuth(false);

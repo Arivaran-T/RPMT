@@ -4,7 +4,6 @@ import {
   Avatar,
   Box,
   IconButton,
-  Grid,
   TextField,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
