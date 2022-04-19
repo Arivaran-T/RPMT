@@ -10,7 +10,8 @@ function Content(props) {
         my={3}
         pt={0.5}
         pl={2}
-        height={"50px"}
+        // height={"50px"}
+        minHeight="50px"
         sx={{
           bgcolor: "#1385E1",
           borderRadius: "6px",
@@ -76,6 +77,7 @@ function Content(props) {
                   href="/submission/id"
                   startIcon={<BackupIcon />}
                   color="secondary"
+                  sx={{ textTransform: "none" ,fontFamily:"open sans"}}
                 >
                   Submit
                 </Button>

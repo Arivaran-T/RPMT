@@ -7,6 +7,7 @@ import SignUp from "./Auth/SignUp/SignUp";
 import Chat from "./Chat/Std-Chat/Chat";
 import Profile from "./Profile/Profile";
 import DashBoard from "./DashBoard/DashBoard";
+import Submission from "./Submission/Submission";
 
 function Pages(props) {
   return (
@@ -23,6 +24,11 @@ function Pages(props) {
           element={<DashBoard mode={props.mode} handler={props.modeHandler} />}
         />
         <Route
+          eaxct
+          path="/submission/:id"
+          element={<Submission mode={props.mode} handler={props.modeHandler} />}
+        />
+        <Route
           path="/auth/sign-in"
           exact
           element={<SignIn mode={props.mode} handler={props.modeHandler} />}
@@ -36,8 +42,13 @@ function Pages(props) {
           element={<Chat mode={props.mode} handler={props.modeHandler} />}
         />
         <Route
-          path="/profile"
+          path="/profile/:page"
           element={<Profile mode={props.mode} handler={props.modeHandler} />}
+        />
+        <Route
+          exact
+          path="/profile"
+          element={<Navigate replace to="/profile/details" />}
         />
       </Routes>
     </>

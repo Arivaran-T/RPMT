@@ -9,8 +9,8 @@ function DashBoard(props) {
       <Header mode={props.mode} handler={props.handler} />
 
       <Paper elevation={2} square>
-        <Box height={"100%"} width="100%">
-          <Container maxWidth="md" sx={{ textAlign: "left" }}>
+        <Box width="100%" minHeight={"83vh"}>
+          <Container  maxWidth="md" sx={{ textAlign: "left" }}>
             <Box py={3}>
               <Paper elevation={3}>
                 <Box p={1} sx={{ bgcolor: "#073050", borderRadius: "3px" }}>
