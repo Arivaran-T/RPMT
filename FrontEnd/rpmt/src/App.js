@@ -67,7 +67,7 @@ function App() {
             secondary: {
               main: "#064663",
             },
-            divider: "#E28743",
+            divider: "#116BB1",
             background: {
               default: "#073050",
               paper: "#273443",

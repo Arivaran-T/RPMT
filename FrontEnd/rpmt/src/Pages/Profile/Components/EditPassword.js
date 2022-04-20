@@ -1,14 +1,15 @@
-import { Paper, Box } from "@mui/material";
-import Heading from "./Heading";
+import { Paper } from "@mui/material";
+import { Box } from "@mui/system";
+import Heading from "../../../Components/Heading";
 
-function EditDetails() {
+function Editpassword() {
   return (
     <>
       <Paper elevation={4}>
         <Box
           p={2}
           sx={{ bgcolor: "#073050", borderRadius: "3px", textAlign: "center" }}
-          minHeight={"77vh"}
+          minHeight={"73vh"}
         >
           <Heading heading="Edit Details" />
         </Box>
@@ -17,4 +18,4 @@ function EditDetails() {
   );
 }
 
-export default EditDetails;
+export default Editpassword;

@@ -1,5 +1,5 @@
 import { Avatar, Box, Grid, Paper } from "@mui/material";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
 

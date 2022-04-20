@@ -13,16 +13,17 @@ import { useState } from "react";
 import Header from "../../Components/Header";
 import Options from "./Options";
 import { useParams } from "react-router-dom";
-import EditDetails from "./EditDetails";
+import EditDetails from "./Components/EditDetails";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { makeStyles } from "@mui/styles";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
+import Editpassword from "./Components/EditPassword";
 
 const useStyle = makeStyles({
-  buttons: { position: "fixed", right: "0px", top: "45%", bgcolor: "#073050"},
+  buttons: { position: "fixed", right: "0px", top: "45%", bgcolor: "#073050" },
 });
 
 function Profile(props) {
@@ -35,7 +36,11 @@ function Profile(props) {
     return (
       <div className={classes.buttons}>
         <Grid item display={{ sm: "none", xs: "block", posision: "absolute" }}>
-          <Box p={1.2} sx={{ bgcolor: "#DFDADA",borderRadius:"5px 0 0 5px" }} elevation={4}>
+          <Box
+            p={0.5}
+            sx={{ bgcolor: "#DFDADA", borderRadius: "5px 0 0 5px" }}
+            elevation={4}
+          >
             <IconButton onClick={toggleDrawer(true)}>
               <MenuOpenIcon fontSize="small" color="secondary" />
             </IconButton>
@@ -107,8 +112,9 @@ function Profile(props) {
                 <Grid item xs={4} display={{ sm: "block", xs: "none" }}>
                   <Options />
                 </Grid>
-                <Grid item xs={10} sm={8}>
+                <Grid item xs={12} sm={8}>
                   {page === "details" && <EditDetails />}
+                  {page === "change-password" && <Editpassword />}
                 </Grid>
               </Grid>
             </Box>
