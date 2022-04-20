@@ -22,7 +22,7 @@ function RMTbtn(props) {
         onClick={props.handler}
         className={classes.btn}
       >
-        {props.btn}
+        <Typography variant="h4">{props.btn}</Typography>
       </Button>
     </>
   );

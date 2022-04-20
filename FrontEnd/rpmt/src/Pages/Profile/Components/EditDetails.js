@@ -1,4 +1,7 @@
 //mui
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import DeleteIcon from "@mui/icons-material/Delete";
+import UploadIcon from "@mui/icons-material/Upload";
 import {
   Paper,
   Box,
@@ -11,6 +14,8 @@ import {
   Typography,
   Grid,
   Divider,
+  Modal,
+  Button,
 } from "@mui/material";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import { makeStyles } from "@mui/styles";
@@ -24,6 +29,8 @@ import { useState } from "react";
 //others
 import RMTbtn from "../../../Components/RMTbtn";
 import Heading from "../../../Components/Heading";
+import { grey, red } from "@mui/material/colors";
+import { width } from "@mui/system";
 
 const useStyle = makeStyles({
   lables: {
@@ -47,13 +54,101 @@ const useStyle = makeStyles({
     fontSize: "13px",
     color: "#ccc",
   },
+  dpLabel: {
+    width: "100%",
+    bgcolor: "red",
+  },
+  btn: {
+    "&:hover": {
+      backgroundColor: "#fff",
+      color: "#3c52b2",
+    },
+  },
 });
+
+const style = {
+  textAlign: "center",
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  // width: 600,
+  bgcolor: "#117DD5",
+  boxShadow: 24,
+  p: 3,
+};
 
 function EditDetails() {
   const classes = useStyle();
   const [value, setValue] = useState(null);
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   return (
     <>
+      <Modal open={open} onClose={handleClose}>
+        <Box sx={style}>
+          <Box sx={{ textAlign: "center" }} width="100%">
+            <label className={classes.dpLabel} htmlFor="image-dp">
+              <Avatar
+                variant="square"
+                sx={{
+                  borderRadius: "4px",
+                  bgcolor: grey[500],
+                  color: "#333",
+                  width: 330,
+                  height: 330,
+                  cursor: "pointer",
+                }}
+              >
+                <CloudUploadIcon
+                  sx={{
+                    color: "#333",
+                    width: 300,
+                    height: 300,
+                  }}
+                />
+              </Avatar>
+            </label>
+            <br />
+            <input hidden id="image-dp" type={"file"} />
+            <Grid container direction="row" alignItems={"center"} justifyContent="space-between">
+              <Grid item >
+                <Button
+                  alignItems="center"
+                  disableElevation
+                  sx={{ color: "#fff", fontFamily: "open sans" }}
+                  variant="contained"
+                  color="secondary"
+                  className={classes.btn}
+                  endIcon={<UploadIcon fontsize="small" />}
+                >
+                  Upload
+                </Button>
+              </Grid>
+              <Grid item >
+                <Button
+                  disableElevation
+                  sx={{ color: "#fff", fontFamily: "open sans" }}
+                  color="error"
+                  endIcon={<DeleteIcon fontsize="small" />}
+                  variant="contained"
+                  className={classes.btn}
+                >
+                  Remove
+                </Button>
+              </Grid>
+              <Grid item >
+                <Button sx={{ color: red[900],fontFamily: "open sans" }} onClick={handleClose}>
+                  Cancel
+                </Button>
+              </Grid>
+            </Grid>
+          </Box>
+        </Box>
+      </Modal>
       <Paper elevation={4}>
         <Box
           p={2}
@@ -65,7 +160,13 @@ function EditDetails() {
             overlap="circular"
             anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
             badgeContent={
-              <IconButton sx={{ color: "#1383DD" }} size="small">
+              <IconButton
+                onClick={() => {
+                  handleOpen();
+                }}
+                sx={{ color: "#1383DD" }}
+                size="small"
+              >
                 <CollectionsIcon size="small" />
               </IconButton>
             }

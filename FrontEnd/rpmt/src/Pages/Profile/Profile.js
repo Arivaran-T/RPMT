@@ -21,9 +21,17 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
 import Editpassword from "./Components/EditPassword";
+import Research from "./Components/Research";
+import SearchGroup from "./Components/SearchGroup";
 
 const useStyle = makeStyles({
-  buttons: { position: "fixed", right: "0px", top: "45%", bgcolor: "#073050" },
+  buttons: {
+    position: "fixed",
+    right: "0px",
+    top: "45%",
+    bgcolor: "#073050",
+    zIndex: "100",
+  },
 });
 
 function Profile(props) {
@@ -115,6 +123,9 @@ function Profile(props) {
                 <Grid item xs={12} sm={8}>
                   {page === "details" && <EditDetails />}
                   {page === "change-password" && <Editpassword />}
+                  {page === "research" && <Research />}
+                  {page === "own-group" && <SearchGroup />}
+                  {page === "group" && <Research />}
                 </Grid>
               </Grid>
             </Box>
