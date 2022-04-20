@@ -67,7 +67,7 @@ function App() {
             secondary: {
               main: "#064663",
             },
-            divider: "#E28743",
+            divider: "#116BB1",
             background: {
               default: "#073050",
               paper: "#273443",
@@ -120,15 +120,15 @@ function App() {
       fontSize: "1rem",
     },
   };
-  // theme1.typography.caption = {
-  //   fontSize: ".5rem",
-  //   "@media (min-width:600px)": {
-  //     fontSize: "1rem",
-  //   },
-  //   [theme1.breakpoints.up("md")]: {
-  //     fontSize: "1.4rem",
-  //   },
-  // };
+  theme1.typography.subtitle2 = {
+    fontSize: ".5rem",
+    "@media (min-width:100px)": {
+      fontSize: ".5rem",
+    },
+    [theme1.breakpoints.up("md")]: {
+      fontSize: ".75rem",
+    },
+  };
 
   const modeHandler = (value) => {
     setMode(value);
