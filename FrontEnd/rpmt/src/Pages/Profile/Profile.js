@@ -24,6 +24,8 @@ import Editpassword from "./Components/EditPassword";
 import Research from "./Components/Research";
 import SearchGroup from "./Components/SearchGroup";
 import OwnGroup from "./Components/OwnGroup";
+import RequestSupervisor from "./Components/RequestSupervisor";
+import Submission from "./Components/Submissions";
 
 const useStyle = makeStyles({
   buttons: {
@@ -72,7 +74,7 @@ function Profile(props) {
       onKeyDown={toggleDrawer(false)}
     >
       <List>
-        {["Profile", "Research", "Submission"].map((text, index) => (
+        {["Profile", "Research", "Submissions"].map((text, index) => (
           <ListItem
             button
             key={text}
@@ -127,6 +129,10 @@ function Profile(props) {
                   {page === "research" && <Research />}
                   {page === "own-group" && <SearchGroup />}
                   {page === "group" && <OwnGroup />}
+                  {page === "submissions" && <Submission />}
+                  {(page === "supervisor" || page === "co-supervisor") && (
+                    <RequestSupervisor page={page} />
+                  )}
                 </Grid>
               </Grid>
             </Box>

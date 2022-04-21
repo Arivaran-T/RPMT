@@ -9,10 +9,10 @@ import {
 } from "@mui/material";
 import * as React from "react";
 
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
 function Confirmation(props) {
-  const Transition = React.forwardRef(function Transition(props, ref) {
-    return <Slide direction="up" ref={ref} {...props} />;
-  });
   return (
     <div>
       <Dialog
@@ -23,9 +23,7 @@ function Confirmation(props) {
       >
         <DialogTitle>{"Remove member?"}</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            Do you Want to Remove
-          </DialogContentText>
+          <DialogContentText>Do you Want to Remove</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={props.handleClose}>Yes</Button>
