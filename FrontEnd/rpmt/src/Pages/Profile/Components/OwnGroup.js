@@ -159,6 +159,7 @@ function OwnGroup() {
             <Grid item xs={8} sx={{ textAlign: "left" }}>
               {true ? (
                 <RMTbtn
+                  href="/profile/supervisor"
                   btn="Request for Supervisor"
                   handler={() => {}}
                   wd="100%"
@@ -183,6 +184,7 @@ function OwnGroup() {
             <Grid item xs={8} sx={{ textAlign: "left" }}>
               {false ? (
                 <RMTbtn
+                  href="/profile/co-supervisor"
                   btn="Request for Co-Supervisor"
                   handler={() => {}}
                   wd="100%"
