@@ -23,6 +23,7 @@ import { useNavigate } from "react-router-dom";
 import Editpassword from "./Components/EditPassword";
 import Research from "./Components/Research";
 import SearchGroup from "./Components/SearchGroup";
+import OwnGroup from "./Components/OwnGroup";
 
 const useStyle = makeStyles({
   buttons: {
@@ -125,7 +126,7 @@ function Profile(props) {
                   {page === "change-password" && <Editpassword />}
                   {page === "research" && <Research />}
                   {page === "own-group" && <SearchGroup />}
-                  {page === "group" && <Research />}
+                  {page === "group" && <OwnGroup />}
                 </Grid>
               </Grid>
             </Box>

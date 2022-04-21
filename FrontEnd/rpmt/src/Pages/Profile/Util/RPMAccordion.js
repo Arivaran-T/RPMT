@@ -10,7 +10,6 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { makeStyles } from "@mui/styles";
 import GroupRequest from "./GroupRequest";
 import { TransitionGroup } from "react-transition-group";
-import { useState } from "react";
 
 const useStyle = makeStyles({ accortion: { backgroundColor: "red" } });
 
