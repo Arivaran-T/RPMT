@@ -30,7 +30,6 @@ import { useState } from "react";
 import RMTbtn from "../../../Components/RMTbtn";
 import Heading from "../../../Components/Heading";
 import { grey, red } from "@mui/material/colors";
-import { width } from "@mui/system";
 
 const useStyle = makeStyles({
   lables: {
