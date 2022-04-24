@@ -15,7 +15,7 @@ import Pages from "./Pages/Pages";
 import { grey } from "@mui/material/colors";
 
 function App() {
-  const [mode, setMode] = useState("light");
+  const [mode, setMode] = useState("dark");
 
   let theme1 = createTheme({
     typography: {
