@@ -3,7 +3,6 @@ import { useState } from "react";
 
 //import pages
 import Footer from "./Components/Footer";
-import "./App.css";
 
 //mui
 import {
