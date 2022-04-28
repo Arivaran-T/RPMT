@@ -8,6 +8,7 @@ import {
   Divider,
   Button,
 } from "@mui/material";
+import * as React from "react";
 import Header from "../../Components/Header";
 import { makeStyles } from "@mui/styles";
 import { grey, red } from "@mui/material/colors";
@@ -15,6 +16,10 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import UploadIcon from "@mui/icons-material/Upload";
 import FileUploadIcon from "@mui/icons-material/FileUpload";
+import LinearProgress from "@mui/material/LinearProgress";
+import PropTypes from "prop-types";
+import { useEffect, useState } from "react";
+
 const useStyle = makeStyles({
   lables: {
     textAlign: "left",
@@ -49,6 +54,34 @@ const useStyle = makeStyles({
   },
 });
 function AddSubmission(props) {
+  const [progress, setProgress] = useState(0);
+  const [selectedFile, setSelectedFile] = useState();
+  const [workprogress, setworkProgress] = useState(false);
+  const [visibleremove, setvisibleremove] = useState(false);
+
+  const onFileChanged = (event) => {
+    setSelectedFile(event.target.files[0]);
+    setworkProgress(true);
+    setvisibleremove(true);
+  };
+  const onCanceled = () => {
+    setworkProgress(false);
+    setvisibleremove(false);
+    setProgress(0);
+    selectedFile();
+  };
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setProgress((oldProgress) => {
+        if (oldProgress === 100) {
+          return 100;
+        }
+        const diff = Math.random() * 10;
+        return Math.min(oldProgress + diff, 100);
+      });
+    }, 500);
+  }, []);
   const classes = useStyle();
   return (
     <>
@@ -88,7 +121,6 @@ function AddSubmission(props) {
                   className={classes.dpLabel}
                   htmlFor="image-dp"
                   textAlign={"center"}
-                  onchange="readURL(this);"
                 >
                   <CloudUploadIcon
                     sx={{
@@ -100,12 +132,29 @@ function AddSubmission(props) {
                   <Typography
                     textAlign={"center"}
                     variant="body1"
-                    sx={{ color: "#0D7FDC", mb: 1 }}
+                    sx={{ color: "#0D7FDC", mb: 0 }}
                   >
                     Drag and drop here
                   </Typography>
                 </label>
-                <input hidden id="image-dp" type={"file"} />
+                <input
+                  hidden
+                  id="image-dp"
+                  type={"file"}
+                  onChange={onFileChanged}
+                  // value={selectedFile}
+                  name={selectedFile}
+                />
+                <br/>
+                {workprogress && (
+                  <Box sx={{ width: "100%", mb:-3}}>
+                    <LinearProgress
+                      variant="determinate"
+                      value={progress}
+                      color="primary"
+                    />
+                  </Box>
+                )}
               </Box>
             </Box>
             <br />
@@ -114,30 +163,34 @@ function AddSubmission(props) {
               container
               direction="row"
               alignItems={"center"}
-              justifyContent="space-between"
+              justifyContent="right"
+              spacing={2}
             >
               <Grid item>
                 <Button
                   alignItems="center"
-                //   disableElevation
+                  disableElevation
                   sx={{ color: "#fff", fontFamily: "open sans" }}
                   variant="contained"
                   className={classes.btn}
+                  onClick={() => {}}
                 >
                   Save
                 </Button>
               </Grid>
               <Grid item>
-                <Button
-                  disableElevation
-                  sx={{ color: "#fff", fontFamily: "open sans" }}
-                  color="error"
-                  //   endIcon={<DeleteIcon fontsize="small" />}
-                  variant="contained"
-                  className={classes.btn}
-                >
-                  Remove
-                </Button>
+                {visibleremove && (
+                  <Button
+                    disableElevation
+                    sx={{ color: "#fff", fontFamily: "open sans" }}
+                    color="error"
+                    variant="contained"
+                    className={classes.btn}
+                    onClick={onCanceled}
+                  >
+                    Remove
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </Box>
