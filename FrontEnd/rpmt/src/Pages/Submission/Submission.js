@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import { typography } from "@mui/system";
 import Header from "../../Components/Header";
+import { useNavigate } from "react-router-dom";
 
 const Rowdata = (props) => {
   return (
@@ -36,6 +37,7 @@ const data = [
 ];
 
 function Submission(props) {
+    const navigate = useNavigate();
   return (
     <>
       <Header mode={props.mode} handler={props.handler} />
@@ -61,7 +63,14 @@ function Submission(props) {
               return <Rowdata heading={row} key={row} />;
             })}
             <Box my={2} textAlign={"right"}>
-              <Button variant="contained">Add Submission</Button>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  navigate(`/submission/edit/:id`);
+                }}
+              >
+                Add Submission
+              </Button>
             </Box>
           </Box>
         </Container>
