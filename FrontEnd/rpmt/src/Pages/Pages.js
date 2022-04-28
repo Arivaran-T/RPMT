@@ -9,6 +9,8 @@ import Profile from "./Profile/Profile";
 import DashBoard from "./DashBoard/DashBoard";
 import Submission from "./Submission/Submission";
 import AddSubmission from "./Submission/AddSubmission";
+import AllSubmissions from "./AllSubmissions/AllSubmissions";
+import SubmissionInfo from "./AllSubmissions/SubmissionInfo";
 
 function Pages(props) {
   return (
@@ -32,7 +34,9 @@ function Pages(props) {
         <Route
           eaxct
           path="/submission/edit/:id"
-          element={<AddSubmission mode={props.mode} handler={props.modeHandler} />}
+          element={
+            <AddSubmission mode={props.mode} handler={props.modeHandler} />
+          }
         />
         <Route
           path="/auth/sign-in"
@@ -55,6 +59,20 @@ function Pages(props) {
           exact
           path="/profile"
           element={<Navigate replace to="/profile/details" />}
+        />
+        <Route
+          eaxct
+          path="/allSubmissions"
+          element={
+            <AllSubmissions mode={props.mode} handler={props.modeHandler} />
+          }
+        />
+        <Route
+          eaxct
+          path="/submissionInfo"
+          element={
+            <SubmissionInfo mode={props.mode} handler={props.modeHandler} />
+          }
         />
       </Routes>
     </>
