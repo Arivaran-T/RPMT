@@ -8,6 +8,7 @@ import Chat from "./Chat/Std-Chat/Chat";
 import Profile from "./Profile/Profile";
 import DashBoard from "./DashBoard/DashBoard";
 import Submission from "./Submission/Submission";
+import AddSubmission from "./Submission/AddSubmission";
 
 function Pages(props) {
   return (
@@ -27,6 +28,11 @@ function Pages(props) {
           eaxct
           path="/submission/:id"
           element={<Submission mode={props.mode} handler={props.modeHandler} />}
+        />
+        <Route
+          eaxct
+          path="/submission/edit/:id"
+          element={<AddSubmission mode={props.mode} handler={props.modeHandler} />}
         />
         <Route
           path="/auth/sign-in"
