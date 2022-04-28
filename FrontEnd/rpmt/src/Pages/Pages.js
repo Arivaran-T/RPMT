@@ -8,6 +8,8 @@ import Chat from "./Chat/Std-Chat/Chat";
 import Profile from "./Profile/Profile";
 import DashBoard from "./DashBoard/DashBoard";
 import Submission from "./Submission/Submission";
+import AllSubmissions from "./AllSubmissions/AllSubmissions";
+import SubmissionInfo from "./AllSubmissions/SubmissionInfo";
 
 function Pages(props) {
   return (
@@ -49,6 +51,20 @@ function Pages(props) {
           exact
           path="/profile"
           element={<Navigate replace to="/profile/details" />}
+        />
+        <Route
+          eaxct
+          path="/allSubmissions"
+          element={
+            <AllSubmissions mode={props.mode} handler={props.modeHandler} />
+          }
+        />
+        <Route
+          eaxct
+          path="/submissionInfo"
+          element={
+            <SubmissionInfo mode={props.mode} handler={props.modeHandler} />
+          }
         />
       </Routes>
     </>
