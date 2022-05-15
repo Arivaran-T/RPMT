@@ -8,52 +8,69 @@ import Chat from "./Chat/Std-Chat/Chat";
 import Profile from "./Profile/Profile";
 import DashBoard from "./DashBoard/DashBoard";
 import Submission from "./Submission/Submission";
-import AddSubmission from "./Submission/AddSubmission";
-import AllSubmissions from "./AllSubmissions/AllSubmissions";
-import SubmissionInfo from "./AllSubmissions/SubmissionInfo";
+import Submissions from "./Std-Submissions/Submissions";
+import SubmissionInfo from "./Std-Submissions/SubmissionInfo";
+import Submit from "./Submission/Submit";
+import Info from "./Submission/Info";
+import Users from "./Users/Users";
+import User from "./Users/User";
+import NewSubmission from "./NewSubmission/NewSubmission";
+import SubmissionTypes from "./Std-Submissions/SubmissionTypes";
+import ResearchSup from "./Supervisor-Research/Reserch-sup";
+import Group from "./Supervisor-Research/Group";
+import Groups from "./Groups/Groups";
 
 function Pages(props) {
   return (
     <>
       <Routes>
-        {/* <Route
-          exact
-          path="/"
-          element={<Navigate replace to="/auth/sign-in" />}
-        /> */}
+        <Route path="/" element={<DashBoard handler={props.modeHandler} />} />
+        <Route path="/users" element={<Users handler={props.modeHandler} />} />
         <Route
-          eaxct
-          path="/"
-          element={<DashBoard mode={props.mode} handler={props.modeHandler} />}
+          path="/user/:id"
+          element={<User handler={props.modeHandler} />}
         />
         <Route
-          eaxct
+          path="/Groups"
+          element={<Groups handler={props.modeHandler} />}
+        />
+        <Route
+          path="/research/grp/id"
+          element={<Group handler={props.modeHandler} />}
+        />
+        <Route
+          path="/research/sup"
+          element={<ResearchSup handler={props.modeHandler} />}
+        />
+        <Route
+          path="/submission/new"
+          element={<NewSubmission handler={props.modeHandler} />}
+        />
+        <Route
           path="/submission/:id"
-          element={<Submission mode={props.mode} handler={props.modeHandler} />}
+          element={<Info handler={props.modeHandler} />}
         />
         <Route
-          eaxct
-          path="/submission/edit/:id"
-          element={
-            <AddSubmission mode={props.mode} handler={props.modeHandler} />
-          }
+          path="/submit/:id"
+          element={<Submission handler={props.modeHandler} />}
+        />
+        <Route
+          path="/submit/add/:id"
+          element={<Submit handler={props.modeHandler} />}
         />
         <Route
           path="/auth/sign-in"
           exact
-          element={<SignIn mode={props.mode} handler={props.modeHandler} />}
+          element={<SignIn handler={props.modeHandler} />}
         />
         <Route
           path="/auth/sign-up"
-          element={<SignUp mode={props.mode} handler={props.modeHandler} />}
+          element={<SignUp handler={props.modeHandler} />}
         />
-        <Route
-          path="/chat"
-          element={<Chat mode={props.mode} handler={props.modeHandler} />}
-        />
+        <Route path="/chat" element={<Chat handler={props.modeHandler} />} />
         <Route
           path="/profile/:page"
-          element={<Profile mode={props.mode} handler={props.modeHandler} />}
+          element={<Profile handler={props.modeHandler} />}
         />
         <Route
           exact
@@ -61,18 +78,16 @@ function Pages(props) {
           element={<Navigate replace to="/profile/details" />}
         />
         <Route
-          eaxct
-          path="/allSubmissions"
-          element={
-            <AllSubmissions mode={props.mode} handler={props.modeHandler} />
-          }
+          path="/Submissions"
+          element={<SubmissionTypes handler={props.modeHandler} />}
         />
         <Route
-          eaxct
-          path="/submissionInfo"
-          element={
-            <SubmissionInfo mode={props.mode} handler={props.modeHandler} />
-          }
+          path="/Submissions/:id"
+          element={<Submissions handler={props.modeHandler} />}
+        />
+        <Route
+          path="/submissions/std/:id"
+          element={<SubmissionInfo handler={props.modeHandler} />}
         />
       </Routes>
     </>

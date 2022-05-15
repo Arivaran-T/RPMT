@@ -66,7 +66,7 @@ function Submission(props) {
               <Button
                 variant="contained"
                 onClick={() => {
-                  navigate(`/submission/edit/:id`);
+                  navigate(`/submit/add/id`);
                 }}
               >
                 Add Submission

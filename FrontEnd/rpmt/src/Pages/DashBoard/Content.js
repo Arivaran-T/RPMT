@@ -2,6 +2,7 @@ import { Box } from "@mui/system";
 import { Button, Grid, Typography } from "@mui/material";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import BackupIcon from "@mui/icons-material/Backup";
+import EditIcon from "@mui/icons-material/Edit";
 
 function Content(props) {
   return (
@@ -9,7 +10,7 @@ function Content(props) {
       <Box
         my={3}
         pt={0.5}
-        pl={2}
+        pl={{ xs: 1, sm: 2 }}
         // height={"50px"}
         minHeight="50px"
         sx={{
@@ -28,9 +29,17 @@ function Content(props) {
           <Grid item sm={4} xs={6}>
             <Grid container direction={"row"}>
               <Grid item>
-                <Typography variant="h4" align="left" fontSize={17}>
+                <Button
+                  href="/submission/id"
+                  align="left"
+                  sx={{
+                    fontSize: { xs: 10, sm: 15 },
+                    textTransform: "none",
+                    color: "#073050",
+                  }}
+                >
                   Submission Name
-                </Typography>
+                </Button>
               </Grid>
               <Grid display={{ xs: "block", sm: "none" }} item>
                 <Typography
@@ -68,30 +77,19 @@ function Content(props) {
             </Typography>
           </Grid>
           <Grid xs={6} sm={3}>
-            {props.icon === "doc" ? (
-              <Typography variant="h4">
-                <Button
-                  variant="contained"
-                  size="small"
-                  disableElevation
-                  href="/submission/id"
-                  startIcon={<BackupIcon />}
-                  color="secondary"
-                  sx={{ textTransform: "none" ,fontFamily:"open sans"}}
-                >
-                  Submit
-                </Button>
-              </Typography>
-            ) : (
-              <Typography
-                fontFamily={"Open Sans"}
-                fontSize={13}
-                fontWeight={"bold"}
-                sx={{ color: "#073050" }}
+            <Typography variant="h4">
+              <Button
+                variant="contained"
+                size="small"
+                disableElevation
+                href="/submit/id"
+                startIcon={props.icon === "doc" ? <BackupIcon /> : <EditIcon />}
+                color="secondary"
+                sx={{ textTransform: "none", fontFamily: "open sans" }}
               >
-                Submitted
-              </Typography>
-            )}
+                {props.icon === "doc" ? "Submit" : "edit"}
+              </Button>
+            </Typography>
           </Grid>
         </Grid>
       </Box>
