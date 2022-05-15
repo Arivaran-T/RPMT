@@ -2,6 +2,7 @@ import { Avatar, Box, Grid, Paper } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
+import { useState } from "react";
 
 const useStyle = makeStyles({
   btn: {
@@ -14,8 +15,13 @@ const useStyle = makeStyles({
 });
 
 function Options(props) {
+  //hooks
   const { page } = useParams();
   const classes = useStyle();
+
+  //state
+  const [user, setUser] = useState("admin");
+
   return (
     <>
       <Paper elevation={4}>
@@ -35,9 +41,17 @@ function Options(props) {
               U
             </Avatar>
           </Grid>
-          <Btn link="details" title="Profile" />
-          <Btn link="research" title="Research" />
-          <Btn link="submissions" title="Submission" />
+          <Btn link="/profile/details" title="Profile" />
+          <Btn
+            link={false ? "/profile/research" : "/research/sup"}
+            title="Research"
+          />
+          <Btn
+            link={user !== "student" ? "/Submissions" : "/profile/submissions"}
+            title="Submission"
+          />
+          {user === "admin" && <Btn link="/Users" title="Users" />}
+          {user === "admin" && <Btn link="/Groups" title="Groups" />}
         </Box>
       </Paper>
     </>
@@ -50,8 +64,14 @@ const Btn = (props) => {
   const bcolor = page === props.link ? "#094F88" : "#073A63";
   return (
     <>
-      <Link className={classes.btn} to={`/profile/${props.link}`}>
-        <Box elevation={4} my={2} p={1} py={1.5} sx={{ bgcolor: bcolor, color: "#fff" ,borderRadius:"6px" }}>
+      <Link className={classes.btn} to={`${props.link}`}>
+        <Box
+          elevation={4}
+          my={2}
+          p={1}
+          py={1.5}
+          sx={{ bgcolor: bcolor, color: "#fff", borderRadius: "6px" }}
+        >
           {props.title}
         </Box>
       </Link>

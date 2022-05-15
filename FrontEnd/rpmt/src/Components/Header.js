@@ -15,16 +15,23 @@ import AccountCircle from "@mui/icons-material/AccountCircle";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import MessageIcon from "@mui/icons-material/Message";
+import { dark, light } from "../Store/theme";
 
 import logo from "../Assets/logo.png";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 function Header(props) {
   const [auth, setAuth] = useState(true);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [mode, setMode] = useState(props.mode);
+
+  //mode
+  const Tmode = useSelector((state) => state.mode.mode);
+  const [mode, setMode] = useState(Tmode);
 
   let history = useNavigate();
+  const dispatch = useDispatch();
 
   const handleClose = () => {
     setAnchorEl(null);
@@ -60,7 +67,11 @@ function Header(props) {
                 setMode((prevMode) =>
                   prevMode === "light" ? "dark" : "light"
                 );
-                props.handler(mode);
+                if (Tmode === "light") {
+                  dispatch(dark());
+                } else {
+                  dispatch(light());
+                }
               }}
             >
               {mode === "light" ? (
