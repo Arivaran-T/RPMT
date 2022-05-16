@@ -19,6 +19,7 @@ import SubmissionTypes from "./Std-Submissions/SubmissionTypes";
 import ResearchSup from "./Supervisor-Research/Reserch-sup";
 import Group from "./Supervisor-Research/Group";
 import Groups from "./Groups/Groups";
+import GroupView from "./Groups/GroupView";
 
 function Pages(props) {
   return (
@@ -29,6 +30,10 @@ function Pages(props) {
         <Route
           path="/user/:id"
           element={<User handler={props.modeHandler} />}
+        />
+        <Route
+          path="/Groups/:id"
+          element={<GroupView handler={props.modeHandler} />}
         />
         <Route
           path="/Groups"
