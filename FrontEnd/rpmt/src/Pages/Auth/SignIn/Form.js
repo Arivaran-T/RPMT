@@ -72,7 +72,7 @@ function SignInForm() {
           <Typography align="right">
             <Box mt={1} mb={1}>
               <Button
-                href="/"
+                href="/password/reset"
                 style={{ textTransform: "lowercase" }}
                 variant="text"
                 color="info"

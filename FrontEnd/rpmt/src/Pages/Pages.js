@@ -20,6 +20,7 @@ import ResearchSup from "./Supervisor-Research/Reserch-sup";
 import Group from "./Supervisor-Research/Group";
 import Groups from "./Groups/Groups";
 import GroupView from "./Groups/GroupView";
+import ResetPassword from "./ResetPassword/ResetPassword";
 
 function Pages(props) {
   return (
@@ -27,6 +28,10 @@ function Pages(props) {
       <Routes>
         <Route path="/" element={<DashBoard handler={props.modeHandler} />} />
         <Route path="/users" element={<Users handler={props.modeHandler} />} />
+        <Route
+          path="/password/reset"
+          element={<ResetPassword handler={props.modeHandler} />}
+        />
         <Route
           path="/user/:id"
           element={<User handler={props.modeHandler} />}

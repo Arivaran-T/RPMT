@@ -123,12 +123,7 @@ function SignInForm() {
               // onChange={handleChange}
             >
               <MenuItem value={"Student"}>Student</MenuItem>
-              <Divider />
-              <MenuItem value={"Supervisor"}>Supervisor</MenuItem>
-              <Divider />
-              <MenuItem value={"Co-Supervisor"}>Co-Supervisor</MenuItem>
-              <Divider />
-              <MenuItem value={"other"}>other</MenuItem>
+              <MenuItem value={"Staff"}>Staff</MenuItem>
             </Select>
           </Box>
           <Box mb={1}>
@@ -168,6 +163,10 @@ function SignInForm() {
             >
               Sign up
             </Button>
+            <Box sx={{ display: "flex" }} my={2}>
+              <Box sx={{ flexGrow: 1 }} />
+              <Button color="info" sx={{textTransform:"none",fontWeight:"600"}} href="/auth/login">Alredy have account?</Button>
+            </Box>
           </Box>
         </Grid>
         <Grid item xs={1}></Grid>
