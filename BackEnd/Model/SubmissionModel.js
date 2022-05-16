@@ -7,8 +7,9 @@ const submissionSchema = new mongoose.Schema({
     trim: true,
   },
   creator_id: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
+    ref: "Users",
   },
   document: {
     type: String,

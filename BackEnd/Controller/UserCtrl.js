@@ -7,7 +7,7 @@ const UserModel = require("../Model/UserModel");
 exports.Register = (req, res) => {
   //incomming data
   const { name, email, mobile_number, password, role, NIC, gender } = req.body;
-
+console.log("called")
   const newUser = new UserModel({
     name,
     email,

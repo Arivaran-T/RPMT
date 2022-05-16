@@ -45,8 +45,8 @@ const userSchema = new mongoose.Schema(
       default: "",
     },
     group_id: {
-      type: String,
-      default: "",
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Groups",
     },
     dp: {
       type: String,

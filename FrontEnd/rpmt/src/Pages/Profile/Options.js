@@ -43,7 +43,7 @@ function Options(props) {
           </Grid>
           <Btn link="/profile/details" title="Profile" />
           <Btn
-            link={false ? "/profile/research" : "/research/sup"}
+            link={true ? "/profile/research" : "/research/sup"}
             title="Research"
           />
           <Btn

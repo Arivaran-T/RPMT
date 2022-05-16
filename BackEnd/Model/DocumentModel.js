@@ -8,11 +8,13 @@ const documentSchema = new mongoose.Schema(
       trim: true,
     },
     submitted_by: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
       required: true,
     },
     group_id: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
       required: true,
     },
     submmited_date: {
@@ -24,7 +26,8 @@ const documentSchema = new mongoose.Schema(
       required: true,
     },
     submission_id: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref:"Submissions",
       required: true,
     },
     url: {

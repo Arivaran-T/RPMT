@@ -29,9 +29,9 @@ app.use((req, res, next) => {
 app.use("/Uploads", express.static("Uploads"));
 
 //routes
-app.use("/api/users", UserRouter);
-app.use("/api/documents", DocumentRoute);
-app.use("/api/submissions", SubmissionRoute);
+app.use("/api/v1/users", UserRouter);
+app.use("/api/v1/documents", DocumentRoute);
+app.use("/api/v1/submissions", SubmissionRoute);
 
 //start server
 db.initDb((err, db) => {
