@@ -88,7 +88,7 @@ function User(props) {
                   <MenuItem value={"Student"}>Student</MenuItem>
                   <MenuItem value={"Supervisor"}>Supervisor</MenuItem>
                   <MenuItem value={"Co-Supervisor"}>Co-Supervisor</MenuItem>
-                  <MenuItem value={"other"}>other</MenuItem>
+                  <MenuItem value={"staff"}>staff</MenuItem>
                 </Select>
                 <TextField
                   fullWidth

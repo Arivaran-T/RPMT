@@ -8,6 +8,7 @@ const db = require("./db");
 const UserRouter = require("./Router/UserRoute");
 const DocumentRoute = require("./Router/DocumentRoute");
 const SubmissionRoute = require("./Router/SubmissionRoute");
+const GroupRoute = require("./Router/GroupRouter");
 
 //middlewares
 app.use(BodyParser.urlencoded({ extended: false }));
@@ -29,9 +30,10 @@ app.use((req, res, next) => {
 app.use("/Uploads", express.static("Uploads"));
 
 //routes
-app.use("/api/users", UserRouter);
-app.use("/api/documents", DocumentRoute);
-app.use("/api/submissions", SubmissionRoute);
+app.use("/api/v1/users", UserRouter);
+app.use("/api/v1/documents", DocumentRoute);
+app.use("/api/v1/submissions", SubmissionRoute);
+app.use("/api/v1/groups", GroupRoute);
 
 //start server
 db.initDb((err, db) => {

@@ -1,8 +1,12 @@
 import { Avatar, Box, Grid, Paper } from "@mui/material";
 import { Link } from "react-router-dom";
-import { useParams } from "react-router-dom";
 import { makeStyles } from "@mui/styles";
-import { useState } from "react";
+
+//react
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const useStyle = makeStyles({
   btn: {
@@ -15,12 +19,29 @@ const useStyle = makeStyles({
 });
 
 function Options(props) {
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //useeffect
+  useEffect(() => {
+    axios
+      .get(`${URL}users/dp/${userID}`)
+      .then((res) => {
+        setDp(res.data.dp);
+      })
+      .catch((er) => {});
+  }, []);
+
   //hooks
   const { page } = useParams();
   const classes = useStyle();
 
+  //user data
+  const { role, userID } = useSelector((state) => state.loging);
+
   //state
-  const [user, setUser] = useState("admin");
+  const [user, setUser] = useState(role);
+  const [dp, setDp] = useState("");
 
   return (
     <>
@@ -35,7 +56,7 @@ function Options(props) {
             <Avatar
               variant="rounded"
               alt="User DP"
-              src=""
+              src={dp}
               sx={{ width: 56, height: 56 }}
             >
               U
@@ -43,15 +64,21 @@ function Options(props) {
           </Grid>
           <Btn link="/profile/details" title="Profile" />
           <Btn
-            link={false ? "/profile/research" : "/research/sup"}
+            link={
+              user === "Staff" ||
+              user === "Supervisor" ||
+              user === "CoSupervisor"
+                ? "/research/sup"
+                : "/profile/research"
+            }
             title="Research"
           />
           <Btn
-            link={user !== "student" ? "/Submissions" : "/profile/submissions"}
+            link={user !== "Student" ? "/Submissions" : "/profile/submissions"}
             title="Submission"
           />
-          {user === "admin" && <Btn link="/Users" title="Users" />}
-          {user === "admin" && <Btn link="/Groups" title="Groups" />}
+          {user === "Admin" && <Btn link="/Users" title="Users" />}
+          {user === "Admin" && <Btn link="/Groups" title="Groups" />}
         </Box>
       </Paper>
     </>

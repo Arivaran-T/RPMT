@@ -18,6 +18,16 @@ router
   .put(UserCtrl.UpdateUser)
   .delete(UserCtrl.DeleteUser);
 
+//forget password
+router.route("/password/email").get(UserCtrl.CheckEmail);
+router.route("/password/otp").get(UserCtrl.CheckOTP);
+
+//single user password
+router
+  .route("/password/:_id")
+  .patch(UserCtrl.ChangePassword)
+  .put(UserCtrl.ResetPassword);
+
 //dp route
 router
   .route("/dp/:_id")

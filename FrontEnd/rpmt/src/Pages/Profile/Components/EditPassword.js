@@ -5,11 +5,19 @@ import {
   Box,
   FormControl,
   Typography,
-  InputAdornment,
 } from "@mui/material";
 import Heading from "../../../Components/Heading";
 import { makeStyles } from "@mui/styles";
 import RMTbtn from "../../../Components/RMTbtn";
+
+//react
+import { useState } from "react";
+import { useSelector } from "react-redux";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
+import axios from "axios";
+//pages
+import Alert from "../../../Components/Alert";
 
 const useStyle = makeStyles({
   lables: {
@@ -31,9 +39,70 @@ const useStyle = makeStyles({
 });
 
 function Editpassword() {
+  //hooks
   const classes = useStyle();
+
+  //user data
+  const { token, userID } = useSelector((state) => state.loging);
+  const [password, setPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [reNewpassword, setReNewPassword] = useState("");
+
+  //error state
+  const [error, setError] = useState("");
+  const [isdisable, setDisbale] = useState(false);
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //submit handler
+  const submit = () => {
+    //validation
+    if (
+      !password.trim() ||
+      password.length < 6 ||
+      !newPassword.trim() ||
+      newPassword.length < 6 ||
+      !reNewpassword.trim()
+    ) {
+      return setError("Password length shoud be longer");
+    }
+    if (newPassword !== reNewpassword) {
+      return setError("new passwords did not match");
+    }
+
+    const data = { newPassword, password };
+    setDisbale(true);
+
+    axios
+      .patch(`${URL}users/password/${userID}`, data)
+      .then((res) => {
+        if (res.data.updated) {
+          setPassword("");
+          setNewPassword("");
+          setReNewPassword("");
+          toast("Password updated", { type: "success" });
+        }
+        setDisbale(false);
+      })
+      .catch((er) => {
+        setDisbale(false);
+        toast("Unable to update passwors, check old password and try again", {
+          type: "error",
+        });
+      });
+  };
   return (
     <>
+      <ToastContainer />
+      <Alert
+        open={!!error}
+        msg={error}
+        title={"Alert!"}
+        handleClose={() => {
+          setError("");
+        }}
+      />
       <Paper elevation={4}>
         <Box
           p={2}
@@ -51,6 +120,10 @@ function Editpassword() {
                   variant="outlined"
                   margin="none"
                   size="small"
+                  value={password}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
+                  }}
                   className={classes.inputs}
                   inputProps={{ className: classes.inputs }}
                   sx={{ marginBottom: "20px" }}
@@ -62,6 +135,10 @@ function Editpassword() {
                   variant="outlined"
                   margin="none"
                   size="small"
+                  value={newPassword}
+                  onChange={(event) => {
+                    setNewPassword(event.target.value);
+                  }}
                   className={classes.inputs}
                   inputProps={{ className: classes.inputs }}
                   sx={{ marginBottom: "20px" }}
@@ -75,11 +152,19 @@ function Editpassword() {
                   variant="outlined"
                   margin="none"
                   size="small"
+                  value={reNewpassword}
+                  onChange={(event) => {
+                    setReNewPassword(event.target.value);
+                  }}
                   className={classes.inputs}
                   inputProps={{ className: classes.inputs }}
                   sx={{ marginBottom: "20px" }}
                 />
-                <RMTbtn btn="SAVE Password" handler={() => {}} wd="100%" />
+                <RMTbtn
+                  btn="SAVE Password"
+                  handler={isdisable ? null : submit}
+                  wd="100%"
+                />
               </FormControl>
             </Box>
           </Container>
