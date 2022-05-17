@@ -4,7 +4,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useState } from "react";
 import Confirmation from "../../../Components/Confirmation";
 
-function Members() {
+function Members(props) {
   const [open, setOpen] = useState(false);
 
   const handleClickOpen = () => {
@@ -14,7 +14,7 @@ function Members() {
   const handleClose = () => {
     setOpen(false);
   };
-  console.log(open);
+
   return (
     <Box
       my={1}
@@ -32,7 +32,7 @@ function Members() {
       <Grid
         container
         direction={"row"}
-        justifyContent="end"
+        justifyContent="space-between"
         alignItems={"center"}
       >
         <Grid item xs={8}>
@@ -41,13 +41,8 @@ function Members() {
             textAlign={"left"}
             sx={{ fontFamily: "open sans", fontWeight: "600", color: "#eee" }}
           >
-            Name
+            {props.data.name}
           </Typography>
-        </Grid>
-        <Grid item xs={2} sx={{ textAlign: "right" }}>
-          <IconButton>
-            <ChatIcon fontSize="small" />
-          </IconButton>
         </Grid>
         <Grid item xs={2} sx={{ textAlign: "right" }}>
           <IconButton
