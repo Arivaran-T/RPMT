@@ -1,5 +1,6 @@
 import Header from "../../../Components/Header";
 import Alert from "../../../Components/Alert";
+import { login } from "../../../Store/auth";
 
 //mui
 import {
@@ -21,6 +22,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useDispatch } from "react-redux";
 
 const useStyles = makeStyles({
   container1: {
@@ -41,6 +43,7 @@ function SignIn(props) {
   //hooks
   const classes = useStyles();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   //url
   const URL = "http://localhost:5000/api/v1/";
@@ -96,6 +99,13 @@ function SignIn(props) {
     axios
       .post(`${URL}users`, data)
       .then((res) => {
+        dispatch(
+          login({
+            role: res.data.role,
+            id: res.data._id,
+            token: res.data.token,
+          })
+        );
         navigate("/", { replace: true });
       })
       .catch((er) => {

@@ -1,8 +1,18 @@
 import Header from "../../../Components/Header";
+import Alert from "../../../Components/Alert";
+import { login } from "../../../Store/auth";
 
 //mui
 import { Grid, Paper, Typography, TextField, Button, Box } from "@mui/material";
 import { makeStyles } from "@mui/styles";
+
+//react
+import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyles = makeStyles({
   container1: {
@@ -40,9 +50,58 @@ const useStyles = makeStyles({
 function SignIn(props) {
   //hooks
   const classes = useStyles();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  //user input
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  //error state
+  const [error, setError] = useState();
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //login handler
+  const submit = () => {
+    //validation
+    if (!email.trim() || !email.includes("@") || !email.includes(".")) {
+      return setError("require valid email");
+    }
+    if (!password.trim() || password.length < 6) {
+      return setError("password should be longer");
+    }
+    const data = { email, password };
+
+    axios
+      .post(`${URL}users/auth`, data)
+      .then((res) => {
+        dispatch(
+          login({
+            role: res.data.role,
+            id: res.data._id,
+            token: res.data.token,
+          })
+        );
+        navigate("/", { replace: true });
+      })
+      .catch((er) => {
+        toast("Unable to login, try again", { type: "error" });
+      });
+  };
 
   return (
     <>
+      <Alert
+        open={!!error}
+        msg={error}
+        title={"Alert!"}
+        handleClose={() => {
+          setError("");
+        }}
+      />
+      <ToastContainer />
       <Header mode={props.mode} handler={props.handler} />
       <Paper className={classes.paperContainer} square elevation={0}>
         <Box className={classes.container1} minHeight="75vh">
@@ -79,6 +138,10 @@ function SignIn(props) {
                         mt={4}
                         color="primary"
                         fullWidth
+                        value={email}
+                        onChange={(event) => {
+                          setEmail(event.target.value);
+                        }}
                         className={classes.input_margin}
                         margin="normal"
                         id="email"
@@ -90,6 +153,10 @@ function SignIn(props) {
                     <TextField
                       mt={4}
                       fullWidth
+                      value={password}
+                      onChange={(event) => {
+                        setPassword(event.target.value);
+                      }}
                       className={classes.input_margin}
                       margin="normal"
                       id="Password"
@@ -115,6 +182,7 @@ function SignIn(props) {
                         size="medium"
                         variant="contained"
                         color="success"
+                        onClick={submit}
                         className={classes.button_margin}
                       >
                         Sign In
