@@ -3,29 +3,31 @@ import {
   Container,
   Box,
   Grid,
-  Fab,
   IconButton,
   ListItemIcon,
 } from "@mui/material";
 import RadioButtonCheckedIcon from "@mui/icons-material/RadioButtonChecked";
 import Drawer from "@mui/material/Drawer";
-import { useState } from "react";
 import Header from "../../Components/Header";
 import Options from "./Options";
-import { useParams } from "react-router-dom";
 import EditDetails from "./Components/EditDetails";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import { makeStyles } from "@mui/styles";
 import List from "@mui/material/List";
 import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
-import { useNavigate } from "react-router-dom";
 import Editpassword from "./Components/EditPassword";
 import Research from "./Components/Research";
 import SearchGroup from "./Components/SearchGroup";
 import OwnGroup from "./Components/OwnGroup";
 import RequestSupervisor from "./Components/RequestSupervisor";
 import Submission from "./Components/Submissions";
+
+//react
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useState } from "react";
 
 const useStyle = makeStyles({
   buttons: {
@@ -38,9 +40,13 @@ const useStyle = makeStyles({
 });
 
 function Profile(props) {
+  //hooks
   const { page } = useParams();
-  const [state, setState] = useState(false);
   const navigate = useNavigate();
+
+  //state
+  const [state, setState] = useState(false);
+  const { token, userID,role } = useSelector((state) => state.loging);
 
   const Floating = () => {
     const classes = useStyle();

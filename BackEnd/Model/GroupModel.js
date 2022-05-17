@@ -14,8 +14,9 @@ const GroupSchema = new mongoose.Schema({
     status: { type: Boolean, default: false },
   },
   leader: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
+    ref: "Users",
   },
   supervisor: {
     type: mongoose.Schema.Types.ObjectId,

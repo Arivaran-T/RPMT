@@ -24,12 +24,18 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
 //react
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 //others
 import RMTbtn from "../../../Components/RMTbtn";
 import Heading from "../../../Components/Heading";
 import { grey, red } from "@mui/material/colors";
+import Alert from "../../../Components/Alert";
+import ImageModal from "../Util/ImageModel";
 
 const useStyle = makeStyles({
   lables: {
@@ -78,76 +84,104 @@ const style = {
 };
 
 function EditDetails() {
+  //hooks
   const classes = useStyle();
-  const [value, setValue] = useState(null);
 
+  //state
+  const [value, setValue] = useState(null);
   const [open, setOpen] = useState(false);
+
+  //handlers
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  //user data
+  const { token, userID, role } = useSelector((State) => State.loging);
+  const [name, setname] = useState("");
+  const [address, setAddress] = useState("");
+  const [email, setEmail] = useState("");
+  const [id, setID] = useState("");
+  const [contact, setContact] = useState("");
+  const [NIC, setNIC] = useState("");
+  const [DOB, setDOB] = useState();
+  const [bio, setBio] = useState("");
+  const [gender, setGender] = useState("");
+  const [dp, setDp] = useState("");
+
+  //error state
+  const [error, setError] = useState("");
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //useEffect
+  useEffect(() => {
+    axios
+      .get(`${URL}users/${userID}`)
+      .then((res) => {
+        const data = res.data;
+        if (data) {
+          setname(data.name);
+          setAddress(data.address);
+          setEmail(data.email);
+          setContact(data.mobile_number);
+          setNIC(data.NIC);
+          setGender(data.gender);
+          setBio(data.bio);
+          setDp(data.dp);
+          setDOB(data.DOB);
+        }
+      })
+      .catch((er) => {});
+  }, []);
+
+  //update details
+  const submit = () => {
+    if (!name.trim()) {
+      return setError("valid name required");
+    }
+    if (
+      !contact.toString().trim() ||
+      contact.length > 10 ||
+      contact.length < 9
+    ) {
+      return setError("valid contact number required");
+    }
+    if (!NIC.trim() || NIC.length < 10) {
+      return setError("require valid NIC");
+    }
+
+    const data = { name, mobile_number: contact, NIC, bio, address, DOB };
+
+    axios
+      .put(`${URL}users/${userID}`, data, {
+        headers: { Authorization: "Agriuservalidation " + token },
+      })
+      .then((res) => {
+        window.location.reload();
+      })
+      .catch((er) => {
+        toast("Unable to update, try again", { type: "error" });
+      });
+  };
+
   return (
     <>
-      <Modal open={open} onClose={handleClose}>
-        <Box sx={style}>
-          <Box sx={{ textAlign: "center" }} width="100%">
-            <label className={classes.dpLabel} htmlFor="image-dp">
-              <Avatar
-                variant="square"
-                sx={{
-                  borderRadius: "4px",
-                  bgcolor: grey[500],
-                  color: "#333",
-                  width: 330,
-                  height: 330,
-                  cursor: "pointer",
-                }}
-              >
-                <CloudUploadIcon
-                  sx={{
-                    color: "#333",
-                    width: 300,
-                    height: 300,
-                  }}
-                />
-              </Avatar>
-            </label>
-            <br />
-            <input hidden id="image-dp" type={"file"} />
-            <Grid container direction="row" alignItems={"center"} justifyContent="space-between">
-              <Grid item >
-                <Button
-                  alignItems="center"
-                  disableElevation
-                  sx={{ color: "#fff", fontFamily: "open sans" }}
-                  variant="contained"
-                  color="secondary"
-                  className={classes.btn}
-                  endIcon={<UploadIcon fontsize="small" />}
-                >
-                  Upload
-                </Button>
-              </Grid>
-              <Grid item >
-                <Button
-                  disableElevation
-                  sx={{ color: "#fff", fontFamily: "open sans" }}
-                  color="error"
-                  endIcon={<DeleteIcon fontsize="small" />}
-                  variant="contained"
-                  className={classes.btn}
-                >
-                  Remove
-                </Button>
-              </Grid>
-              <Grid item >
-                <Button sx={{ color: red[900],fontFamily: "open sans" }} onClick={handleClose}>
-                  Cancel
-                </Button>
-              </Grid>
-            </Grid>
-          </Box>
-        </Box>
-      </Modal>
+      <Alert
+        open={!!error}
+        msg={error}
+        title={"Alert!"}
+        handleClose={() => {
+          setError("");
+        }}
+      />
+      <ToastContainer />
+      <ImageModal
+        userID={userID}
+        token={token}
+        open={open}
+        handleClose={handleClose}
+      />
       <Paper elevation={4}>
         <Box
           p={2}
@@ -172,7 +206,7 @@ function EditDetails() {
           >
             <Avatar
               alt="user profile"
-              src=""
+              src={dp}
               sx={{ height: "70px", width: "70px", bgcolor: "#fff" }}
             />
           </Badge>
@@ -180,10 +214,14 @@ function EditDetails() {
           <Container maxWidth="sm">
             <Box mt={5}>
               <FormControl fullWidth>
-                <Typography className={classes.lables}>Name</Typography>
+                <Typography className={classes.lables}>Name*</Typography>
                 <TextField
                   color="info"
                   variant="outlined"
+                  value={name}
+                  onChange={(event) => {
+                    setname(event.target.value);
+                  }}
                   margin="none"
                   size="small"
                   className={classes.inputs}
@@ -194,26 +232,38 @@ function EditDetails() {
                 <TextField
                   color="info"
                   variant="outlined"
+                  value={address}
+                  onChange={(event) => {
+                    setAddress(event.target.value);
+                  }}
                   margin="none"
                   size="small"
                   className={classes.inputs}
                   inputProps={{ className: classes.inputs }}
                   sx={{ marginBottom: "13px" }}
                 />
-                <Typography className={classes.lables}>Contact No</Typography>
+                <Typography className={classes.lables}>Contact No*</Typography>
                 <TextField
                   color="info"
                   variant="outlined"
+                  value={contact}
+                  onChange={(event) => {
+                    setContact(event.target.value);
+                  }}
                   margin="none"
                   size="small"
                   className={classes.inputs}
                   inputProps={{ className: classes.inputs }}
                   sx={{ marginBottom: "13px" }}
                 />
-                <Typography className={classes.lables}>NIC</Typography>
+                <Typography className={classes.lables}>NIC*</Typography>
                 <TextField
                   color="info"
                   variant="outlined"
+                  value={NIC}
+                  onChange={(event) => {
+                    setNIC(event.target.value);
+                  }}
                   margin="none"
                   size="small"
                   className={classes.inputs}
@@ -225,15 +275,21 @@ function EditDetails() {
                 </Typography>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
+                    disableFuture
                     inputProps={{ className: classes.inputs }}
-                    value={value}
+                    value={DOB}
                     onChange={(newValue) => {
-                      setValue(newValue);
+                      setDOB(newValue);
                     }}
                     renderInput={(params) => (
                       <TextField
                         color="info"
                         variant="outlined"
+                        value={DOB}
+                        onChange={(event) => {
+                          setDOB(event.target.value);
+                          console.log(event.target.value);
+                        }}
                         margin="none"
                         size="small"
                         className={classes.inputs}
@@ -252,19 +308,23 @@ function EditDetails() {
                   id="outlined-multiline-static"
                   color="info"
                   variant="outlined"
+                  value={bio}
+                  onChange={(event) => {
+                    setBio(event.target.value);
+                  }}
                   margin="none"
                   size="small"
                   className={classes.inputs}
                   inputProps={{ className: classes.inputs }}
                   sx={{ marginBottom: "13px" }}
                 />
-                <RMTbtn wd="100%" btn="Save Changes" handler={() => {}} />
+                <RMTbtn wd="100%" btn="Save Changes" handler={submit} />
               </FormControl>
               <Box mt={5} />
               <Divider />
-              <Rowdata title="Email Id" data="nirojan@gamail.com" />
-              <Rowdata title="Student Id" data="IT202218928" />
-              <Rowdata title="Gender" data="Male" />
+              <Rowdata title="Email Id" data={email} />
+              <Rowdata title="Student Id" data={id} />
+              <Rowdata title="Gender" data={gender} />
               <Box mt={3} />
               <Box sx={{ textAlign: "right" }}>
                 <RMTbtn
