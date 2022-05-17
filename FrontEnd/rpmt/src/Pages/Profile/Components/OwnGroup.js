@@ -10,6 +10,7 @@ import {
   List,
   Collapse,
   Button,
+  Skeleton,
 } from "@mui/material";
 import Heading from "../../../Components/Heading";
 import { makeStyles } from "@mui/styles";
@@ -45,6 +46,18 @@ function OwnGroup() {
 
   //state
   const [hasGroup, setHasGroup] = useState(false);
+  const [isLoaded, setLoaded] = useState(false);
+
+  //group data
+  const [grpName, setGrpName] = useState("");
+  const [field, setgField] = useState("");
+  const [topic, setgTopic] = useState("");
+  const [leader, setLeader] = useState("");
+  const [supervisor, setSupervisor] = useState("");
+  const [coSupervisor, setCoSupervisor] = useState("");
+  const [requestedSupervisor, setRSupervisor] = useState(false);
+  const [requestedCoSupervisor, setRCoSupervisor] = useState(false);
+  const [members, setMembers] = useState([]);
 
   //user data
   const { token, userID } = useSelector((state) => state.loging);
@@ -54,20 +67,45 @@ function OwnGroup() {
     axios
       .get(`${URL}groups/users/${userID}`)
       .then((res) => {
-        if (!res.data.exist) {
-          setHasGroup(false);
-        } else {
+        console.log(res.data.data);
+        if (res.data.data) {
+          setLoaded(true);
           setHasGroup(true);
+          setGrpName(res.data.data.name);
+          setgField(res.data.data.research_Field);
+          setgTopic(res.data.data.research_Topic.name);
+          setLeader(res.data.data.leader.name);
+          setMembers(res.data.data.members);
+          setSupervisor(
+            res.data.data.supervisor && res.data.data.supervisor.name
+          );
+          setCoSupervisor(
+            res.data.data.coSupervisor && res.data.data.coSupervisor.name
+          );
+          setRSupervisor(
+            res.data.data.requested && res.data.data.requested.supervisor
+              ? true
+              : false
+          );
+          setRSupervisor(
+            res.data.data.requested && res.data.data.requested.coSupervisor
+              ? true
+              : false
+          );
+        } else {
+          setHasGroup(false);
+          setLoaded(true);
         }
       })
       .catch((er) => {
+        console.log(er);
+        setLoaded(true);
         setHasGroup(false);
       });
   }, []);
 
   //create group
   const addgroup = () => {
-    console.log(research_Field, research_Topic, name);
     //validation
     if (!research_Field.trim() || !research_Topic.trim() || !name.trim()) {
       return setError("All fields are required");
@@ -115,7 +153,7 @@ function OwnGroup() {
           }}
           minHeight={"73vh"}
         >
-          {hasGroup && (
+          {isLoaded && hasGroup && (
             <>
               <Heading heading="Research Group" />
               <Box my={2} />
@@ -132,6 +170,11 @@ function OwnGroup() {
                 <Grid item xs={8}>
                   <FormControl fullWidth>
                     <TextField
+                      disabled
+                      value={grpName}
+                      onChange={(event) => {
+                        setGrpName(event.target.value);
+                      }}
                       color="info"
                       variant="outlined"
                       margin="none"
@@ -156,6 +199,11 @@ function OwnGroup() {
                 <Grid item xs={8}>
                   <FormControl fullWidth>
                     <TextField
+                      disabled
+                      value={field}
+                      onChange={(event) => {
+                        setgField(event.target.value);
+                      }}
                       color="info"
                       variant="outlined"
                       margin="none"
@@ -180,7 +228,12 @@ function OwnGroup() {
                 <Grid item xs={8}>
                   <FormControl fullWidth>
                     <TextField
+                      disabled
                       color="info"
+                      value={topic}
+                      onChange={(event) => {
+                        setgTopic(event.target.value);
+                      }}
                       variant="outlined"
                       margin="none"
                       size="small"
@@ -204,6 +257,11 @@ function OwnGroup() {
                 <Grid item xs={8}>
                   <FormControl fullWidth>
                     <TextField
+                      disabled
+                      value={leader}
+                      onChange={(event) => {
+                        setLeader(event.target.value);
+                      }}
                       color="info"
                       variant="outlined"
                       margin="none"
@@ -218,9 +276,9 @@ function OwnGroup() {
               <Grid container justifyContent={"start"} alignItems="center">
                 <Grid item xs={4}></Grid>
                 <Grid item xs={8}>
-                  <FormControl fullWidth>
+                  {/* <FormControl fullWidth>
                     <RMTbtn btn="save changes" handler={() => {}} wd="100%" />
-                  </FormControl>
+                  </FormControl> */}
                 </Grid>
               </Grid>
               <Divider sx={{ marginY: 2 }} />
@@ -234,17 +292,21 @@ function OwnGroup() {
                     Supervisor
                   </Typography>
                 </Grid>
-                <Grid item xs={8} sx={{ textAlign: "left" }}>
-                  {true ? (
+                <Grid item xs={8} sx={{ textAlign: "left", my: 2 }}>
+                  {!requestedSupervisor ? (
                     <RMTbtn
                       href="/profile/supervisor"
                       btn="Request for Supervisor"
                       handler={() => {}}
                       wd="100%"
                     />
+                  ) : supervisor ? (
+                    <Typography variant="h4" sx={{ color: "#888" }}>
+                      {supervisor}
+                    </Typography>
                   ) : (
-                    <Typography variant="h4" sx={{ color: "#fff" }}>
-                      Supervisor Name
+                    <Typography variant="h4" sx={{ color: "#888" }}>
+                      requested
                     </Typography>
                   )}
                 </Grid>
@@ -260,16 +322,20 @@ function OwnGroup() {
                   </Typography>
                 </Grid>
                 <Grid item xs={8} sx={{ textAlign: "left" }}>
-                  {false ? (
+                  {!requestedCoSupervisor ? (
                     <RMTbtn
                       href="/profile/co-supervisor"
                       btn="Request for Co-Supervisor"
                       handler={() => {}}
                       wd="100%"
                     />
+                  ) : coSupervisor ? (
+                    <Typography variant="h4" sx={{ color: "#fff" }}>
+                      {coSupervisor}
+                    </Typography>
                   ) : (
                     <Typography variant="h4" sx={{ color: "#fff" }}>
-                      Co-Supervisor Name
+                      Requested
                     </Typography>
                   )}
                 </Grid>
@@ -280,22 +346,24 @@ function OwnGroup() {
                 <Container maxWidth="xs">
                   <List>
                     <TransitionGroup>
-                      <Collapse>
-                        <Members />
-                      </Collapse>
-                      <Collapse>
-                        <Members />
-                      </Collapse>
-                      <Collapse>
-                        <Members />
-                      </Collapse>
+                      {members ? (
+                        members.map((row, index) => {
+                          return (
+                            <Collapse>
+                              <Members key={index} data={row} />
+                            </Collapse>
+                          );
+                        })
+                      ) : (
+                        <>No Members</>
+                      )}
                     </TransitionGroup>
                   </List>
                 </Container>
               </Container>
             </>
           )}
-          {!hasGroup && (
+          {!hasGroup && isLoaded && (
             <>
               <Container maxWidth="sm">
                 <TextField
@@ -354,6 +422,24 @@ function OwnGroup() {
               >
                 Create A Group
               </Button>
+            </>
+          )}
+          {!isLoaded && (
+            <>
+              <Skeleton
+                animation="pulse"
+                variant="rectangular"
+                sx={{ borderRadius: 1, mb: 2 }}
+                width={"100%"}
+                height={100}
+              />
+              <Skeleton
+                animation="pulse"
+                variant="rectangular"
+                sx={{ borderRadius: 1 }}
+                width={"100%"}
+                height={100}
+              />
             </>
           )}
         </Box>
