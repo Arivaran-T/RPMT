@@ -8,6 +8,12 @@ const authAdmin = require("../Middleware/authAdmin");
 
 router.use(fileUpload());
 
+//cancel/accept request
+router
+  .route("/:_id/requests/:id")
+  .put(GroupCtrl.UpdateRequest) //for staff
+  .patch(); //for groups
+
 //single group
 router.route("/:_id").get(GroupCtrl.GetGroup).put().post(GroupCtrl.AddGroup);
 

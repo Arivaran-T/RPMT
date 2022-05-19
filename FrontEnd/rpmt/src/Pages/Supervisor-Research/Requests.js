@@ -1,29 +1,113 @@
-import {
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  Paper,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Grid, Skeleton, Paper, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ThumbUpAltIcon from "@mui/icons-material/ThumbUpAlt";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 
+//react
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function Requests() {
+  //data
+  const [groups, setGroups] = useState([]);
+  const [isLoaded, setLoaded] = useState(false);
+
+  //user data
+  const { token, userID } = useSelector((state) => state.loging);
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //useEffect call
+  useEffect(() => {
+    axios
+      .get(`${URL}users/staff/${userID}/groups?request=true`)
+      .then((res) => {
+        setGroups(res.data);
+        console.log(res.data);
+        setLoaded(true);
+      })
+      .catch((er) => {
+        setLoaded(true);
+      });
+  }, []);
+
+  //accept / reject
+  const submit = (status, role, index, id) => {
+    axios
+      .put(`${URL}groups/${userID}/requests/${id}`, {
+        role,
+        status,
+      })
+      .then(() => {
+        setGroups((pre) => {
+          const array = [...pre];
+          array.splice(index, 1);
+          return array;
+        });
+      })
+      .catch((er) => {
+        toast("Unable to " + status + "try again", { type: "error" });
+      });
+  };
+
   return (
     <>
+      <ToastContainer />
       <Box minHeight={"72vh"} component={Paper} elevation={1} p={3}>
-        <Request />
-        <Request />
-        <Request />
-        <Request />
+        {isLoaded ? (
+          <>
+            {groups.length > 0 &&
+              groups.map((row, index) => {
+                return (
+                  <Request
+                    submit={submit}
+                    index={index}
+                    key={index}
+                    data={row}
+                  />
+                );
+              })}
+          </>
+        ) : (
+          <>
+            <Skeleton
+              animation="pulse"
+              variant="rectangular"
+              sx={{ borderRadius: 1, mb: 2 }}
+              width={"100%"}
+              height={150}
+            />
+            <Skeleton
+              animation="pulse"
+              variant="rectangular"
+              sx={{ borderRadius: 1, mb: 2 }}
+              width={"100%"}
+              height={150}
+            />
+            <Skeleton
+              animation="pulse"
+              variant="rectangular"
+              sx={{ borderRadius: 1, mb: 2 }}
+              width={"100%"}
+              height={150}
+            />
+          </>
+        )}
       </Box>
     </>
   );
 }
-const Request = () => {
-  const navigate = useNavigate();
+const Request = (props) => {
+  //user data
+  const { userID } = useSelector((state) => state.loging);
+
+  const role =
+    props.data.requested.supervisor == userID ? "supervisor" : "coSupervisor";
+
   return (
     <Grid
       component={Paper}
@@ -38,21 +122,31 @@ const Request = () => {
     >
       <Grid item>
         <Typography sx={{ color: "#1071bc", fontSize: 20 }}>
-          Group Name
+          {props.data.name}
         </Typography>
         <Typography sx={{ color: "#888", fontSize: 15 }}>
-          Research Topic
+          {props.data.research_Topic.name}
         </Typography>
         <Typography sx={{ color: "#ccc", fontSize: 15 }}>
-          Supervisor : <span style={{ color: "#E28743" }}>supervisor name</span>
+          Supervisor :
+          <span style={{ color: "#E28743" }}>
+            {props.data.supervisor ? props.data.supervisor : "N/A"}
+          </span>
         </Typography>
         <Typography sx={{ color: "#ccc", fontSize: 15 }}>
           Co-Supervisor :{" "}
-          <span style={{ color: "#E28743" }}>Co-supervisor name</span>
+          <span style={{ color: "#E28743" }}>
+            {props.data.coSupervisor ? props.data.coSupervisor : "N/A"}
+          </span>
         </Typography>
         <Typography sx={{ color: "#ccc", fontSize: 15 }}>
-          Students :{" "}
-          <span style={{ color: "#E28743" }}>[name,name,name,name]</span>
+          Members :{" "}
+          <span style={{ color: "#E28743" }}>
+            {props.data.members.length > 0 &&
+              props.data.members.map((row) => {
+                return row.name;
+              })}
+          </span>
         </Typography>
       </Grid>
       <Box sx={{ flexGrow: 1 }} />
@@ -65,6 +159,9 @@ const Request = () => {
           }}
         >
           <Button
+            onClick={() => {
+              props.submit("accept", role, props.index, props.data._id);
+            }}
             variant="contained"
             disableElevation
             color="success"
@@ -75,6 +172,9 @@ const Request = () => {
           </Button>
           <Box sx={{ flexGrow: 1 }} />
           <Button
+            onClick={() => {
+              props.submit("reject", role, props.index, props.data._id);
+            }}
             sx={{ fontSize: { xs: 12, sm: 14 } }}
             variant="contained"
             disableElevation

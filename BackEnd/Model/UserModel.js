@@ -59,7 +59,13 @@ const userSchema = new mongoose.Schema(
     OTP: {
       type: Number,
     },
-    requests: [{ type: mongoose.Schema.Types.ObjectId, ref: "Groups" }],
+    requests: [
+      {
+        id: { type: mongoose.Schema.Types.ObjectId, ref: "Groups" },
+        role: { type: String },
+      },
+    ],
+    groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "Groups" }],
   },
   {
     timestamps: true,
