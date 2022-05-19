@@ -6,6 +6,7 @@ import {
   FormControl,
   Grid,
   Paper,
+  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
@@ -13,6 +14,10 @@ import Heading from "../../../Components/Heading";
 import { makeStyles } from "@mui/styles";
 import SearchIcon from "@mui/icons-material/Search";
 import Supervisor from "../Util/Supervisor";
+
+//react
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 const useStyle = makeStyles({
   inputs: {
@@ -32,8 +37,67 @@ const useStyle = makeStyles({
 });
 
 function RequestSupervisor(props) {
-  const page = props.page;
+  //data
+  const page = props.page.split("-")[0];
+  const grp_id = props.page.split("-")[1];
+
+  //hooks
   const classes = useStyle();
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //state
+  const [hasSupervisor, setSupervisor] = useState();
+  const [hasRequestedSupervisor, setReqSupervisor] = useState();
+  const [isLoaded, setLoaded] = useState(false);
+
+  //search loading
+  const [isSearchLoaded, setSearchLoaded] = useState(true);
+
+  //search val
+  const [search, setSearch] = useState("");
+  const [searchval, setSearchval] = useState([]);
+
+  //useEffect call
+  useEffect(() => {
+    axios
+      .get(`${URL}groups/${grp_id}?${page}={true}`)
+      .then((res) => {
+        console.log(res.data)
+        setLoaded(true);
+        if (res.data.supervisor) {
+          setSupervisor(true);
+        } else if (res.data.Requested) {
+          setReqSupervisor(true);
+        } else if (res.data.isRequestable) {
+        }
+      })
+      .catch((er) => {
+        console.log(er);
+        setLoaded(true);
+      });
+  }, []);
+
+  //search
+  const submit = () => {
+    if (!search.trim()) {
+      setSearchval([])
+      return;
+    }
+    setSearchLoaded(false);
+    axios
+      .get(`${URL}users/staff/${page}?search=${search}`)
+      .then((res) => {
+        console.log(res.data.data);
+        setSearchLoaded(true);
+        setSearchval(res.data.data);
+      })
+      .catch((er) => {
+        setSearchLoaded(true);
+      });
+  };
+
   return (
     <>
       <Paper elevation={4}>
@@ -42,58 +106,108 @@ function RequestSupervisor(props) {
           sx={{ bgcolor: "#073050", borderRadius: "3px", textAlign: "center" }}
           minHeight={"73vh"}
         >
-          <Heading heading={`Request ${page}`} />
-          <Container maxWidth="sm">
-            <Grid
-              container
-              justifyContent={"start"}
-              alignItems="center"
-              spacing={1}
-            >
-              <Grid item xs={8}>
-                <FormControl fullWidth>
-                  <TextField
-                    color="info"
-                    variant="outlined"
-                    margin="none"
-                    size="small"
-                    className={classes.inputs}
-                    inputProps={{ className: classes.inputs }}
-                  />
-                </FormControl>
-              </Grid>
-              <Grid item xs={4} sx={{textAlign:"right"}}>
-                <Button
-                  sx={{ bgcolor: "#1383DD", color: "#fff", margin: "0" }}
-                  color="secondary"
-                  onClick={() => {}}
-                  className={classes.btn}
-                  endIcon={<SearchIcon Size="small" />}
+          {isLoaded ? (
+            <>
+              <Heading heading={`Request ${page}`} />
+              <Container maxWidth="sm">
+                <Grid
+                  container
+                  justifyContent={"end"}
+                  alignItems=""
+                  spacing={1}
                 >
-                  <Typography
-                    variant="h4"
-                    sx={{ fontFamily: "open sans", fontWeight: "600" }}
-                  >
-                    Search
-                  </Typography>
-                </Button>
-              </Grid>
-            </Grid>
-            <Typography
-              variant="subtitle2"
-              sx={{ color: "#fff" }}
-              textAlign={"left"}
-            >
-              You can only request to one
-            </Typography>
-            <Divider sx={{marginTop:2}}/>
-            <Box my={5} />
-            <Container maxWidth="xs">
-              <Supervisor />
-              <Supervisor />
-              <Supervisor />
-            </Container>
-          </Container>
+                  <Grid item xs={8}>
+                    <FormControl fullWidth>
+                      <TextField
+                        disabled={hasSupervisor || hasRequestedSupervisor}
+                        color="info"
+                        variant="outlined"
+                        margin="none"
+                        value={search}
+                        onChange={(event) => {
+                          setSearch(event.target.value);
+                        }}
+                        helperText=" You can only request to one"
+                        size="small"
+                        onKeyDown={submit}
+                        inputProps={{ className: classes.inputs }}
+                      />
+                    </FormControl>
+                  </Grid>
+                  <Grid item sx={{ textAlign: "right" }}>
+                    <Button
+                      onClick={submit}
+                      disabled={hasSupervisor || hasRequestedSupervisor}
+                      sx={{ bgcolor: "#1383DD", color: "#fff", margin: "0" }}
+                      color="secondary"
+                      className={classes.btn}
+                      endIcon={<SearchIcon Size="small" />}
+                    >
+                      <Typography
+                        variant="h4"
+                        sx={{
+                          fontFamily: "open sans",
+                          fontWeight: "600",
+                          textTransform: "none",
+                        }}
+                      >
+                        Search
+                      </Typography>
+                    </Button>
+                  </Grid>
+                </Grid>
+
+                <Divider sx={{ marginTop: 2 }} />
+                <Box my={5} />
+                <Container maxWidth="xs">
+                  {isSearchLoaded ? (
+                    <>
+                      {searchval.length > 0 &&
+                        searchval.map((row, index) => {
+                          return (
+                            <Supervisor page={page} grp={grp_id} key={index} data={row} />
+                          );
+                        })}
+                    </>
+                  ) : (
+                    <>
+                      <Skeleton
+                        animation="pulse"
+                        variant="rectangular"
+                        sx={{ borderRadius: 1, mb: 2 }}
+                        width={"100%"}
+                        height={50}
+                      />
+                      <Skeleton
+                        animation="pulse"
+                        variant="rectangular"
+                        sx={{ borderRadius: 1, mb: 2 }}
+                        width={"100%"}
+                        height={50}
+                      />
+                      <Skeleton
+                        animation="pulse"
+                        variant="rectangular"
+                        sx={{ borderRadius: 1, mb: 2 }}
+                        width={"100%"}
+                        height={50}
+                      />
+                    </>
+                  )}
+                </Container>
+              </Container>
+            </>
+          ) : (
+            <>
+              <Skeleton
+                animation="pulse"
+                variant="rectangular"
+                sx={{ borderRadius: 1, mb: 2 }}
+                width={"100%"}
+                height={50}
+              />
+            </>
+          )}
         </Box>
       </Paper>
     </>

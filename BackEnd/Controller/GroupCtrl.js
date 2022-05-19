@@ -35,7 +35,25 @@ exports.AddGroup = (req, res) => {
 exports.UpdateGroup = (req, res) => {};
 
 //get group by grp id
-exports.GetGroup = (req, res) => {};
+exports.GetGroup = (req, res) => {
+  const { supervisor, cosupervisor } = req.query;
+  const { _id } = req.params;
+  const filter = supervisor ? "supervisor" : "cosupervisor";
+
+  if (filter) {
+    GroupModel.findById({ _id }, { filter: 1, requested: 1 })
+      .then((data) => {
+        if (data[filter]) {
+          return res.status(200).json({ filter: true });
+        } else if (data.requested && data.requested[filter]) {
+          return res.status(200).json({ Requested: true });
+        } else {
+          return res.status(200).json({ isRequestable: true });
+        }
+      })
+      .catch((er) => {});
+  }
+};
 
 //get group by user id
 exports.GetUserGroup = (req, res) => {
@@ -67,3 +85,21 @@ exports.GetUserGroup = (req, res) => {
 };
 
 //request supervisor
+exports.Request = (req, res) => {
+  //prrameters
+  const { _id, role, user_id } = req.params;
+  console.log(role);
+
+  GroupModel.findByIdAndUpdate(
+    { _id },
+    { $set: { [`requested.${role}`]: user_id } },
+    { upsert: true }
+  )
+    .then((data) => {
+      return res.status(200).json({ requested: true });
+    })
+    .catch((er) => {
+      return res.status(404).json({ requested: false });
+      console.log(er);
+    });
+};

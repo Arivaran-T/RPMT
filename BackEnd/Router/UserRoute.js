@@ -38,4 +38,7 @@ router
 //register
 router.route("/").post(UserCtrl.Register).get(UserCtrl.GetUsers);
 
+//search any staff
+router.route("/staff/:role").get(UserCtrl.GetStaff);
+
 module.exports = router;

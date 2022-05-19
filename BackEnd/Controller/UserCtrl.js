@@ -119,7 +119,6 @@ exports.UpdateDp = (req, res) => {
   const { _id } = req.params;
   const date = Date.now();
 
-
   if (req.files) {
     let fileToUpload = req.files.dp;
     const fileName = _id + date + fileToUpload.name;
@@ -158,7 +157,7 @@ exports.UpdateDp = (req, res) => {
 //remove dp
 exports.RemoveDp = (req, res) => {
   const { _id } = req.params;
-console.log("here")
+  console.log("here");
   UserModel.findByIdAndUpdate({ _id }, { dp: "" }).then((data) => {
     if (data.dp) {
       const path = data.dp.split("http://localhost:5000/")[1];
@@ -313,5 +312,22 @@ exports.CheckOTP = (req, res) => {
     })
     .catch((er) => {
       return res.status(404).json({ match: false });
+    });
+};
+
+//search staff
+exports.GetStaff = (req, res) => {
+  const { search } = req.query;
+  const { role } = req.params;
+
+  UserModel.find(
+    { role: "Staff", name: { $regex: "^" + search } },
+    { name: 1, email: 1, mobile_number: 1, dp: 1 }
+  )
+    .then((data) => {
+      return res.status(200).json({ data });
+    })
+    .catch((er) => {
+      return res.status(404).json({});
     });
 };

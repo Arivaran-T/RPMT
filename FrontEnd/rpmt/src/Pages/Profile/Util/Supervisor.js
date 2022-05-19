@@ -1,6 +1,10 @@
 import { Box, Button, Grid, Typography } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { makeStyles } from "@mui/styles";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 
 const useStyle = makeStyles({
   btn: {
@@ -11,29 +15,55 @@ const useStyle = makeStyles({
   },
 });
 
-function Supervisor() {
+function Supervisor(props) {
+  //grp id
+  const grp_id = props.grp;
+  const page = props.page;
+
+  //hook
+  const navigate = useNavigate();
+
   const classes = useStyle();
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  const request = () => {
+    axios
+      .put(`${URL}groups/${grp_id}/${page}/${props.data._id}`)
+      .then((res) => {
+        if (res.data.requested) {
+          navigate("/profile/group", { replace: true });
+        }
+      })
+      .catch((er) => {
+        toast("Unable to send request try again", { type: "error" });
+      });
+  };
+
   return (
     <Box my={2} bgcolor="#064A82" borderRadius={2}>
+      <ToastContainer />
       <Grid container justifyContent={"space-between"} alignItems="center">
         <Grid item>
           <Typography variant="h4" sx={{ color: "#fff", paddingLeft: 2 }}>
-            Supervisor Name
+            {props.data.name}
           </Typography>
         </Grid>
         <Grid item>
           <Button
             sx={{ bgcolor: "#1383DD", color: "#fff", margin: "0" }}
             color="secondary"
-            onClick={() => {}}
+            onClick={request}
             className={classes.btn}
           >
-            <Typography
+            request
+            {/* <Typography
               variant="h4"
               sx={{ fontFamily: "open sans", fontWeight: "600" }}
             >
               request
-            </Typography>
+            </Typography> */}
           </Button>
         </Grid>
       </Grid>

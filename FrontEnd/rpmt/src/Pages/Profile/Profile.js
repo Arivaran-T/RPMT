@@ -46,7 +46,7 @@ function Profile(props) {
 
   //state
   const [state, setState] = useState(false);
-  const { token, userID,role } = useSelector((state) => state.loging);
+  const { token, userID, role } = useSelector((state) => state.loging);
 
   const Floating = () => {
     const classes = useStyle();
@@ -136,7 +136,8 @@ function Profile(props) {
                   {page === "own-group" && <SearchGroup />}
                   {page === "group" && <OwnGroup />}
                   {page === "submissions" && <Submission />}
-                  {(page === "supervisor" || page === "co-supervisor") && (
+                  {(page.split("-")[0] === "supervisor" ||
+                    page.split("-")[0] === "coSupervisor") && (
                     <RequestSupervisor page={page} />
                   )}
                 </Grid>
