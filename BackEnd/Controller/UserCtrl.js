@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const UserModel = require("../Model/UserModel");
+const GroupModel = require("../Model/GroupModel");
 const mailSender = require("../Utils/mailSender");
 
 //user register
@@ -119,7 +120,6 @@ exports.UpdateDp = (req, res) => {
   const { _id } = req.params;
   const date = Date.now();
 
-
   if (req.files) {
     let fileToUpload = req.files.dp;
     const fileName = _id + date + fileToUpload.name;
@@ -158,7 +158,7 @@ exports.UpdateDp = (req, res) => {
 //remove dp
 exports.RemoveDp = (req, res) => {
   const { _id } = req.params;
-console.log("here")
+  console.log("here");
   UserModel.findByIdAndUpdate({ _id }, { dp: "" }).then((data) => {
     if (data.dp) {
       const path = data.dp.split("http://localhost:5000/")[1];
@@ -314,4 +314,84 @@ exports.CheckOTP = (req, res) => {
     .catch((er) => {
       return res.status(404).json({ match: false });
     });
+};
+
+//search staff
+exports.GetStaff = (req, res) => {
+  const { search } = req.query;
+  const { role } = req.params;
+
+  UserModel.find(
+    { role: "Staff", name: { $regex: "^" + search } },
+    { name: 1, email: 1, mobile_number: 1, dp: 1 }
+  )
+    .then((data) => {
+      return res.status(200).json({ data });
+    })
+    .catch((er) => {
+      return res.status(404).json({});
+    });
+};
+
+//staff get group details
+exports.GetGroup = (req, res) => {
+  const { request, group } = req.query;
+  const { _id } = req.params;
+
+  if (request) {
+    UserModel.findById({ _id }, { requests: 1 })
+      .then((data) => {
+        const ids = data.requests.map((row) => row.id);
+
+        GroupModel.find(
+          { _id: { $in: ids } },
+          {
+            coSupervisor: 1,
+            supervisor: 1,
+            leader: 1,
+            research_Topic: 1,
+            research_Field: 1,
+            name: 1,
+            requested: 1,
+          }
+        )
+          .populate({ path: "members", select: "name" })
+          .populate({ path: "supervisor", select: "name" })
+          .populate({ path: "coSupervisor", select: "name" })
+          .then((data) => {
+            return res.status(200).json(data);
+          })
+          .catch((er) => {
+            return res.status(404).json({ fetched: false });
+          });
+      })
+      .catch((er) => {});
+  } else if (group) {
+    UserModel.findById({ _id }, { groups: 1 })
+      .then((data) => {
+        const groups = data.requests;
+
+        GroupModel.find(
+          { _id: { $in: data.requests } },
+          {
+            coSupervisor: 1,
+            supervisor: 1,
+            leader: 1,
+            research_Topic: 1,
+            research_Field: 1,
+            name: 1,
+          }
+        )
+          .populate({ path: "members", select: "name" })
+          .populate({ path: "supervisor", select: "name" })
+          .populate({ path: "coSupervisor", select: "name" })
+          .then((data) => {
+            return res.status(200).json(data);
+          })
+          .catch((er) => {});
+      })
+      .catch((er) => {
+        return res.status(404).json({ fetched: false });
+      });
+  }
 };

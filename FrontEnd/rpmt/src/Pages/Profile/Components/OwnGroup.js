@@ -50,9 +50,11 @@ function OwnGroup() {
 
   //group data
   const [grpName, setGrpName] = useState("");
+  const [grp_id, setgrp_id] = useState("");
   const [field, setgField] = useState("");
   const [topic, setgTopic] = useState("");
   const [leader, setLeader] = useState("");
+  const [leaderID, setLeaderID] = useState("");
   const [supervisor, setSupervisor] = useState("");
   const [coSupervisor, setCoSupervisor] = useState("");
   const [requestedSupervisor, setRSupervisor] = useState(false);
@@ -67,14 +69,15 @@ function OwnGroup() {
     axios
       .get(`${URL}groups/users/${userID}`)
       .then((res) => {
-        console.log(res.data.data);
         if (res.data.data) {
+          setgrp_id(res.data.data._id);
           setLoaded(true);
           setHasGroup(true);
           setGrpName(res.data.data.name);
           setgField(res.data.data.research_Field);
           setgTopic(res.data.data.research_Topic.name);
           setLeader(res.data.data.leader.name);
+          setLeaderID(res.data.data.leader._id);
           setMembers(res.data.data.members);
           setSupervisor(
             res.data.data.supervisor && res.data.data.supervisor.name
@@ -83,12 +86,14 @@ function OwnGroup() {
             res.data.data.coSupervisor && res.data.data.coSupervisor.name
           );
           setRSupervisor(
-            res.data.data.requested && res.data.data.requested.supervisor
+            res.data.data.requested !== undefined &&
+              res.data.data.requested.supervisor !== undefined
               ? true
               : false
           );
-          setRSupervisor(
-            res.data.data.requested && res.data.data.requested.coSupervisor
+          setRCoSupervisor(
+            res.data.data.requested !== undefined &&
+              res.data.data.requested.coSupervisor !== undefined
               ? true
               : false
           );
@@ -295,8 +300,9 @@ function OwnGroup() {
                 <Grid item xs={8} sx={{ textAlign: "left", my: 2 }}>
                   {!requestedSupervisor ? (
                     <RMTbtn
-                      href="/profile/supervisor"
-                      btn="Request for Supervisor"
+                      disabled={userID !== leaderID}
+                      href={"/profile/supervisor-" + grp_id}
+                      btn={"Request for Supervisor"}
                       handler={() => {}}
                       wd="100%"
                     />
@@ -306,7 +312,7 @@ function OwnGroup() {
                     </Typography>
                   ) : (
                     <Typography variant="h4" sx={{ color: "#888" }}>
-                      requested
+                      Requested
                     </Typography>
                   )}
                 </Grid>
@@ -324,7 +330,8 @@ function OwnGroup() {
                 <Grid item xs={8} sx={{ textAlign: "left" }}>
                   {!requestedCoSupervisor ? (
                     <RMTbtn
-                      href="/profile/co-supervisor"
+                      disabled={userID !== leaderID}
+                      href={"/profile/coSupervisor-" + grp_id}
                       btn="Request for Co-Supervisor"
                       handler={() => {}}
                       wd="100%"
@@ -334,7 +341,7 @@ function OwnGroup() {
                       {coSupervisor}
                     </Typography>
                   ) : (
-                    <Typography variant="h4" sx={{ color: "#fff" }}>
+                    <Typography variant="h4" sx={{ color: "#888" }}>
                       Requested
                     </Typography>
                   )}

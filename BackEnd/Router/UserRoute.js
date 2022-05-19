@@ -38,4 +38,10 @@ router
 //register
 router.route("/").post(UserCtrl.Register).get(UserCtrl.GetUsers);
 
+//staff related grping
+router.route("/staff/:_id/groups").get(UserCtrl.GetGroup).put();
+
+//search any staff
+router.route("/staff/:role").get(UserCtrl.GetStaff);
+
 module.exports = router;
