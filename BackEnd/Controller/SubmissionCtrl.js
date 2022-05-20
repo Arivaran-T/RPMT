@@ -95,7 +95,7 @@ exports.DeleteSubmission = (req, res) => {
 //get single data
 exports.GetSubmision = (req, res) => {
   const { _id } = req.params;
-  SubmissionModel.findById({ _id })
+  SubmissionModel.findById({ _id }, { creator_id: 0, marking_scheme: 0 })
     .then((data) => {
       return res.status(200).json({ data });
     })

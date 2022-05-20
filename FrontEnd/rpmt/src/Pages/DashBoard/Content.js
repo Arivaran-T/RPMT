@@ -91,12 +91,12 @@ function Content(props) {
                 variant="contained"
                 size="small"
                 disableElevation
-                href="/submit/id"
+                href={"/submit/add/" + props.data._id}
                 startIcon={props.icon === "doc" ? <BackupIcon /> : <EditIcon />}
                 color="secondary"
                 sx={{ textTransform: "none", fontFamily: "open sans" }}
               >
-                {props.icon === "doc" ? "Submit" : "edit"}
+                Submit
               </Button>
             </Typography>
           </Grid>

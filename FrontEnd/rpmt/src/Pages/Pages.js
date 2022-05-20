@@ -7,7 +7,6 @@ import SignUp from "./Auth/SignUp/SignUp";
 import Chat from "./Chat/Std-Chat/Chat";
 import Profile from "./Profile/Profile";
 import DashBoard from "./DashBoard/DashBoard";
-import Submission from "./Submission/Submission";
 import Submissions from "./Std-Submissions/Submissions";
 import SubmissionInfo from "./Std-Submissions/SubmissionInfo";
 import Submit from "./Submission/Submit";
@@ -71,10 +70,11 @@ function Pages(props) {
               path="/submission/:id"
               element={<Info handler={props.modeHandler} />}
             />
-            <Route
+            {/* <Route
               path="/submit/:id"
               element={<Submission handler={props.modeHandler} />}
-            />
+            /> */}
+            {/* {remove} */}
             <Route
               path="/submit/add/:id"
               element={<Submit handler={props.modeHandler} />}

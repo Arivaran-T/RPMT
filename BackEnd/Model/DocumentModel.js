@@ -2,11 +2,6 @@ const mongoose = require("mongoose");
 
 const documentSchema = new mongoose.Schema(
   {
-    title: {
-      type: String,
-      required: true,
-      trim: true,
-    },
     submitted_by: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Users",
@@ -18,10 +13,6 @@ const documentSchema = new mongoose.Schema(
       required: true,
     },
     submmited_date: {
-      type: String,
-      required: true,
-    },
-    submmited_time: {
       type: String,
       required: true,
     },

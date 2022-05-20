@@ -1,15 +1,17 @@
 const fs = require("fs");
 const DocumentModel = require("../Model/DocumentModel");
+const UserModel = require("../Model/UserModel");
 
 //add doc
 exports.AddDocument = (req, res) => {
   const { _id: submitted_by } = req.params;
-  const { title, group_id, submmited_date, submmited_time, submission_id } =
-    req.body;
+  const { submmited_date, submission_id } = req.body;
+
+  const date = Date.now();
 
   if (req.files) {
     let fileToUpload = req.files.doc;
-    const fileName = submitted_by + submmited_date + fileToUpload.name;
+    const fileName = submitted_by + date + fileToUpload.name;
 
     //add new
     fileToUpload.mv("Uploads/" + fileName, (error) => {
@@ -19,20 +21,26 @@ exports.AddDocument = (req, res) => {
       } else {
         const link = "http://localhost:5000/Uploads/" + fileName;
 
-        const newDoc = new DocumentModel({
-          title,
-          submitted_by,
-          group_id,
-          submmited_date,
-          submmited_time,
-          submission_id,
-          url: link,
-        });
-
-        newDoc
-          .save()
+        UserModel.findById({ _id: submitted_by }, { group_id: 1 })
           .then((data) => {
-            return res.status(200).json({ submitted: true });
+
+            const newDocu = new DocumentModel({
+              submitted_by,
+              group_id: data.group_id,
+              submmited_date,
+              submission_id,
+              url: link,
+            });
+
+            newDocu
+              .save()
+              .then((any) => {
+                return res.status(200).json({ submitted: true });
+              })
+              .catch((er) => {
+                console.log(er.message);
+                return res.status(404).json({ submitted: false });
+              });
           })
           .catch((er) => {
             return res.status(404).json({ submitted: false });
@@ -47,11 +55,13 @@ exports.AddDocument = (req, res) => {
 //edit doc
 exports.EditDoc = (req, res) => {
   const { _id } = req.params;
-  const { title, submmited_date, submmited_time } = req.body;
+  const { submmited_date, submitted_by } = req.body;
+
+  const date = Date.now();
 
   if (req.files) {
     let fileToUpload = req.files.doc;
-    const fileName = submmited_date + fileToUpload.name;
+    const fileName = date + fileToUpload.name;
 
     DocumentModel.findById({ _id }, { url: 1 }).then((data) => {
       //remove old doc
@@ -74,7 +84,7 @@ exports.EditDoc = (req, res) => {
 
           DocumentModel.findByIdAndUpdate(
             { _id },
-            { title, submmited_date, submmited_time, url: link }
+            { submmited_date, url: link, submitted_by }
           )
             .then((data) => {
               return res.status(200).json({ updated: true });
@@ -146,4 +156,29 @@ exports.GetDocs = (req, res) => {
     .catch((er) => {
       return res.status(404).json({ fetched: false });
     });
+};
+
+//get users doc
+exports.GetSubmissionDoc = (req, res) => {
+  const { _id, user_id } = req.params;
+
+  UserModel.findById({ _id: user_id }, { group_id: 1 })
+    .then((data) => {
+      const group_id = data.group_id;
+
+      DocumentModel.findOne({ submission_id: _id, group_id: group_id })
+        .populate({
+          path: "submission_id",
+          select: "title due_date due_time max_size",
+        })
+        .populate({ path: "submitted_by", select: "name" })
+        .then((data) => {
+          return res.status(200).json(data);
+        })
+        .catch((er) => {
+          console.log(er);
+          return res.status(404).json({ fetched: false });
+        });
+    })
+    .catch((er) => {});
 };
