@@ -1,80 +1,135 @@
-import { Box, Button, Container, Paper, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Container,
+  Paper,
+  Skeleton,
+  Typography,
+} from "@mui/material";
 import Header from "../../Components/Header";
 import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
 import ArticleIcon from "@mui/icons-material/Article";
 
+//react
+import { useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useSelector } from "react-redux";
+
+//utils
+import { timeParser, dateParser } from "../../Utils/TimeFormatter";
+
 function Info(props) {
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //user data
+  const { token, userID, role } = useSelector((state) => state.loging);
+
+  //submission id
+  const { id } = useParams();
+
+  //state
+  const [submission, setSubmission] = useState();
+  const [isLoaded, setLoaded] = useState(false);
+
+  //useEffect call
+  useEffect(() => {
+    axios
+      .get(`${URL}submissions/${id}`)
+      .then((res) => {
+        console.log(res.data.data);
+        setLoaded(true);
+        if (res.data) {
+          setSubmission(res.data.data);
+        }
+      })
+      .catch((er) => {
+        setLoaded(true);
+      });
+  }, []);
+
   return (
     <>
       <Header mode={props.mode} handler={props.handler} />
       <Box minHeight={"81vh"} component={Paper} elevation={1} square p={0.5}>
-        <Container
-          sx={{ mt: 4 }}
-          component={Paper}
-          variant="outlined"
-          maxWidth={"sm"}
-        >
-          <Typography sx={{ my: 2, fontSize: "1.3rem", color: "#116BB1" }}>
-            Submission title
-          </Typography>
-          <Typography
-            sx={{
-              my: 2,
-              textAlign: "left",
-              fontWeight: "600",
-              fontSize: { xs: ".8rem", sm: ".9rem" },
-            }}
-          >
-            Video provides a powerful way to help you prove your point. When you
-            click Online Video, you can paste in the embed code for the video
-            you want to add. You can also type a keyword to search online for
-            the video that best fits your document. To make your document look
-            professionally produced, Word provides header, footer, cover page,
-            and text box designs that complement each other. For example, you
-            can add a matching cover page, header, and sidebar. Click Insert and
-            then choose the elements you want from the different galleries.
-            Themes and styles also help keep your document coordinated. When you
-            click Design and choose a new Theme, the pictures, charts, and
-            SmartArt graphics change to match your new theme. When you apply
-            styles, your headings change to match the new theme.
-          </Typography>
-          <Typography
-            sx={{
-              color: "#aaa",
-              fontWeight: "700",
-              mb: 2,
-              fontSize: { xs: ".7rem", sm: ".9rem" },
-            }}
-          >
-            Due Date : 2022/12/12
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "row" }} mb={2}>
-            <PictureAsPdfIcon sx={{ fontSize: 30 }} />
-            <Button
-              sx={{
-                color: "#116BB1",
-                textTransform: "none",
-                fontWeight: "700",
-              }}
-              href="/uploads/"
-            >
-              example.pdf
-            </Button>
-            <Box sx={{ flexGrow: 1 }} />
-            <Button
-              sx={{
-                color: "#116BB1",
-                textTransform: "none",
-                fontWeight: "700",
-              }}
+        {isLoaded ? (
+          submission ? (
+            <Container
+              sx={{ mt: 4 }}
+              component={Paper}
               variant="outlined"
-              color="info"
-              href="/submit/add/id"
+              maxWidth={"sm"}
             >
-              Add Submisson
-            </Button>
-          </Box>
-        </Container>
+              <Typography sx={{ my: 2, fontSize: "1.3rem", color: "#116BB1" }}>
+                {submission.title}
+              </Typography>
+              <Typography
+                sx={{
+                  my: 2,
+                  textAlign: "left",
+                  fontWeight: "600",
+                  fontSize: { xs: ".8rem", sm: ".9rem" },
+                }}
+              >
+                {submission.description}
+              </Typography>
+              <Typography
+                sx={{
+                  color: "#aaa",
+                  fontWeight: "700",
+                  mb: 2,
+                  fontSize: { xs: ".7rem", sm: ".9rem" },
+                }}
+              >
+                Due Date :{" "}
+                {dateParser(submission.due_date) +
+                  " - " +
+                  timeParser(submission.due_time)}
+              </Typography>
+              <Box sx={{ display: "flex", flexDirection: "row" }} mb={2}>
+                <PictureAsPdfIcon sx={{ fontSize: 30 }} />
+                <Button
+                  sx={{
+                    color: "#116BB1",
+                    textTransform: "none",
+                    fontWeight: "700",
+                  }}
+                  href={submission.document}
+                >
+                  {submission.title}
+                </Button>
+                <Box sx={{ flexGrow: 1 }} />
+                <Button
+                  sx={{
+                    color: "#116BB1",
+                    textTransform: "none",
+                    fontWeight: "700",
+                  }}
+                  variant="outlined"
+                  color="info"
+                  href={"/submit/add/" + submission._id}
+                >
+                  Add Submisson
+                </Button>
+              </Box>
+            </Container>
+          ) : (
+            <Typography sx={{ color: "red", textAlign: "center",mt:4 }}>
+              No data available
+            </Typography>
+          )
+        ) : (
+          <Container sx={{ mt: 3 }} maxWidth={"sm"}>
+            <Skeleton
+              animation="pulse"
+              variant="rectangular"
+              sx={{ borderRadius: 1, mb: 2 }}
+              width={"100%"}
+              height={400}
+            />
+          </Container>
+        )}
       </Box>
     </>
   );

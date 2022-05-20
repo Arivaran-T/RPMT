@@ -4,6 +4,9 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import BackupIcon from "@mui/icons-material/Backup";
 import EditIcon from "@mui/icons-material/Edit";
 
+//utils
+import { timeParser, dateParser } from "../../Utils/TimeFormatter";
+
 function Content(props) {
   return (
     <>
@@ -30,7 +33,7 @@ function Content(props) {
             <Grid container direction={"row"}>
               <Grid item>
                 <Button
-                  href="/submission/id"
+                  href={"/submission/" + props.data._id}
                   align="left"
                   sx={{
                     fontSize: { xs: 10, sm: 15 },
@@ -38,7 +41,7 @@ function Content(props) {
                     color: "#073050",
                   }}
                 >
-                  Submission Name
+                  {props.data.title}
                 </Button>
               </Grid>
               <Grid display={{ xs: "block", sm: "none" }} item>
@@ -50,7 +53,9 @@ function Content(props) {
                   align="left"
                   sx={{ color: "#DFDADA", fontFamily: "Arial" }}
                 >
-                  2022/02/22-12.00PM
+                  {dateParser(props.data.due_date) +
+                    " - " +
+                    timeParser(props.data.due_time)}
                 </Typography>
               </Grid>
             </Grid>
@@ -72,7 +77,11 @@ function Content(props) {
                 <Grid item>
                   <CalendarMonthIcon />
                 </Grid>
-                <Grid item>2022/02/22-12.00PM</Grid>
+                <Grid item>
+                  {dateParser(props.data.due_date) +
+                    " - " +
+                    timeParser(props.data.due_time)}
+                </Grid>
               </Grid>
             </Typography>
           </Grid>

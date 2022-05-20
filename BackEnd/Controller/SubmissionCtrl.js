@@ -3,28 +3,29 @@ const SubmissionModel = require("../Model/SubmissionModel");
 
 exports.AddSubmission = (req, res) => {
   const { _id: creator_id } = req.params;
-  const { title, due_date, visibility, description, max_size } = req.body;
+  const { title, due_date, due_time, visibility, description, max_size } =
+    req.body;
   const date = Date.now();
 
   if (req.files) {
     //document
     let doc = req.files.doc;
-    const docName = "doc" + date + fileToUpload.name;
+    const docName = "doc" + date + doc.name;
     const document = "http://localhost:5000/Uploads/" + docName;
 
     //markingScheme
-    let Scheme = req.files.dp;
-    const SchemeName = "Scheme" + date + fileToUpload.name;
+    let Scheme = req.files.scheme;
+    const SchemeName = "Scheme" + date + Scheme.name;
     const marking_scheme = "http://localhost:5000/Uploads/" + SchemeName;
 
     //oc upload
-    doc.mv("Uploads/" + fileName, (error) => {
+    doc.mv("Uploads/" + docName, (error) => {
       if (error) {
         console.log(error);
         return res.status(404).json({ added: false });
       } else {
         //Scheme upload
-        Scheme.mv("Uploads/" + fileName, (error) => {
+        Scheme.mv("Uploads/" + SchemeName, (error) => {
           if (error) {
             console.log(error);
             return res.status(404).json({ added: false });
@@ -38,6 +39,7 @@ exports.AddSubmission = (req, res) => {
               due_date,
               max_size,
               visibility,
+              due_time,
             });
 
             //add
@@ -47,6 +49,7 @@ exports.AddSubmission = (req, res) => {
                 return res.status(200).json({ added: true });
               })
               .catch((er) => {
+                console.log(er);
                 return res.status(404).json({ added: false });
               });
           }
@@ -103,11 +106,11 @@ exports.GetSubmision = (req, res) => {
 
 //get all submissions
 exports.GetSubmissions = (req, res) => {
-  const { page } = req.query;
-  const skip = (page - 1) * 20;
-  const limit = 20;
+  // const { page } = req.query;
+  // const skip = (page - 1) * 20;
+  // const limit = 20;
 
-  SubmissionModel.find({}, { skip, limit })
+  SubmissionModel.find({ visibility: true }, {})
     .then((data) => {
       if (data) {
         return res.status(200).json({ data });

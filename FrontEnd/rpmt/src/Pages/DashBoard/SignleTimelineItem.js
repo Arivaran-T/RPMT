@@ -10,7 +10,6 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import ArticleIcon from "@mui/icons-material/Article";
 
-
 import Content from "./Content";
 
 function SingleTimelineItem(props) {
@@ -32,7 +31,7 @@ function SingleTimelineItem(props) {
           <TimelineConnector />
         </TimelineSeparator>
         <TimelineContent sx={{ textAlign: "center" }}>
-          <Content icon={props.icon} />
+          <Content data={props.data} icon={props.icon} />
         </TimelineContent>
       </TimelineItem>
     </>

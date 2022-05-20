@@ -1,4 +1,4 @@
-import { Container, Box, Paper, IconButton } from "@mui/material";
+import { Container, Box, Paper, IconButton, Skeleton } from "@mui/material";
 import Header from "../../Components/Header";
 import {
   Timeline,
@@ -19,6 +19,7 @@ import AddBoxIcon from "@mui/icons-material/AddBox";
 import { useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function DashBoard(props) {
   //url
@@ -26,6 +27,25 @@ function DashBoard(props) {
 
   //user data
   const { token, userID, role } = useSelector((state) => state.loging);
+
+  //state
+  const [submissions, setSubmissions] = useState([]);
+  const [isLoaded, setLoaded] = useState(false);
+
+  //use effct call
+  useEffect(() => {
+    axios
+      .get(`${URL}submissions`)
+      .then((res) => {
+        setLoaded(true);
+        if (res.data) {
+          setSubmissions(res.data.data);
+        }
+      })
+      .catch((er) => {
+        setLoaded(true);
+      });
+  }, []);
 
   return (
     <>
@@ -39,9 +59,27 @@ function DashBoard(props) {
                 <Box p={1} sx={{ bgcolor: "#073050", borderRadius: "3px" }}>
                   <Timeline position="right">
                     {role === "Admin" && <NewSubmission />}
-                    <SingleTimelineItem icon="doc" />
-                    <SingleTimelineItem />
-                    <SingleTimelineItem icon="doc" />
+                    {isLoaded ? (
+                      submissions.length > 0 ? (
+                        submissions.map((row, index) => {
+                          return (
+                            <SingleTimelineItem
+                              data={row}
+                              key={index}
+                              icon="doc"
+                            />
+                          );
+                        })
+                      ) : (
+                        <></>
+                      )
+                    ) : (
+                      <>
+                        <SubSkelton />
+                        <SubSkelton />
+                        <SubSkelton />
+                      </>
+                    )}
                   </Timeline>
                 </Box>
               </Paper>
@@ -52,6 +90,44 @@ function DashBoard(props) {
     </>
   );
 }
+
+const SubSkelton = () => {
+  return (
+    <TimelineItem>
+      <TimelineOppositeContent
+        style={{
+          maxWidth: "1px",
+          paddingLeft: "0px",
+          paddingRight: "0px",
+        }}
+      />
+      <TimelineSeparator>
+        <TimelineConnector />
+        <TimelineDot color="info">
+          <AddBoxIcon
+            sx={{
+              height: "30px",
+              width: "30px",
+              cursor: "pointer",
+              color: "#1071bc",
+            }}
+          />
+        </TimelineDot>
+        <TimelineConnector />
+      </TimelineSeparator>
+      <TimelineContent sx={{ textAlign: "center", my: 3 }}>
+        <Skeleton
+          animation="pulse"
+          variant="rectangular"
+          sx={{ borderRadius: 1 }}
+          width={"100%"}
+          height={"100%"}
+        />
+        <Box my={1} pt={1} pl={{ xs: 1, sm: 2 }} minHeight="40px"></Box>
+      </TimelineContent>
+    </TimelineItem>
+  );
+};
 
 const NewSubmission = () => {
   const navigate = useNavigate();
