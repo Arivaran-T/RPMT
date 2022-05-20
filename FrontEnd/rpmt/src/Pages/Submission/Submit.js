@@ -1,47 +1,26 @@
-import {
-  Container,
-  Box,
-  Paper,
-  Typography,
-  Avatar,
-  Grid,
-  Divider,
-  Button,
-} from "@mui/material";
+import { Container, Box, Paper, Typography, Button } from "@mui/material";
 import * as React from "react";
 import Header from "../../Components/Header";
 import { makeStyles } from "@mui/styles";
-import { grey, red } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteIcon from "@mui/icons-material/Delete";
-import UploadIcon from "@mui/icons-material/Upload";
-import FileUploadIcon from "@mui/icons-material/FileUpload";
 import LinearProgress from "@mui/material/LinearProgress";
-import PropTypes from "prop-types";
+
+//react
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+import Alert from "../../Components/Alert";
+
+//utils
+import compare from "../../Utils/TimeCompare";
+import { dateParser, timeParser } from "../../Utils/TimeFormatter";
 
 const useStyle = makeStyles({
-  lables: {
-    textAlign: "left",
-    fontFamily: "Arial",
-    fontWeight: "700",
-    fontSize: "13px",
-    color: "#ddd",
-  },
-  inputs: {
-    color: "#99ccff",
-    background: "rgb(6, 74, 130)",
-    borderRadius: "5px",
-    fontFamily: "arial",
-    fontWeight: "600",
-    letterSpacing: ".5px",
-  },
-  data: {
-    fontFamily: "Open Sans",
-    fontWeight: "500",
-    fontSize: "13px",
-    color: "#ccc",
-  },
   dpLabel: {
     width: "100%",
     bgcolor: "red",
@@ -53,38 +32,135 @@ const useStyle = makeStyles({
     },
   },
 });
+
 function Submit(props) {
+  //state
   const [progress, setProgress] = useState(0);
   const [selectedFile, setSelectedFile] = useState();
   const [workprogress, setworkProgress] = useState(false);
   const [visibleremove, setvisibleremove] = useState(false);
+  const [submission, setSubmission] = useState();
+  const [doc, setDoc] = useState();
+  const [submittable, setSubmittable] = useState(true);
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //sub id
+  const { id } = useParams();
+
+  //error state
+  const [error, setError] = useState();
+
+  //user data
+  const { token, userID, role } = useSelector((state) => state.loging);
+
+  //useEffect
+  useEffect(() => {
+    //get submission related data
+    axios
+      .get(`${URL}submissions/${id}`)
+      .then((res) => {
+        setSubmission(res.data.data);
+        const val = compare(res.data.data.due_date, res.data.data.due_time);
+        setSubmittable(val);
+      })
+      .catch((er) => {});
+
+    //get doc data
+    axios
+      .get(`${URL}documents/${id}/${userID}`)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data) {
+          setDoc(res.data);
+        }
+      })
+      .catch((er) => {});
+  }, []);
 
   const onFileChanged = (event) => {
     setSelectedFile(event.target.files[0]);
-    setworkProgress(true);
+
     setvisibleremove(true);
   };
   const onCanceled = () => {
     setworkProgress(false);
     setvisibleremove(false);
     setProgress(0);
-    selectedFile();
+    setSelectedFile();
   };
 
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((oldProgress) => {
-        if (oldProgress === 100) {
-          return 100;
-        }
-        const diff = Math.random() * 10;
-        return Math.min(oldProgress + diff, 100);
+  //submit
+  const submit = () => {
+    if (!selectedFile) {
+      return setError("Require file");
+    }
+    if (selectedFile.size / (1024 * 1024) > submission.max_size) {
+      return setError("Maximum upload size is 10Mb");
+    }
+    setworkProgress(true);
+
+    const data = new FormData();
+console.log("here")
+    data.append("submmited_date", new Date());
+    data.append("submission_id", id);
+    data.append("doc", selectedFile);
+
+    axios
+      .post(`${URL}documents/${userID}`, data)
+      .then((res) => {
+        console.log(res.data);
+        setworkProgress(false);
+        toast("submitted", { type: "success" });
+      })
+      .catch((er) => {
+        toast("Unable to submit ,try again", { type: "error" });
+        setworkProgress(false);
       });
-    }, 500);
-  }, []);
+  };
+
+  //update
+  const edit = () => {
+    if (!selectedFile) {
+      return setError("Require file");
+    }
+    if (selectedFile.size / (1024 * 1024) > submission.max_size) {
+      return setError("Maximum upload size is 10Mb");
+    }
+    setworkProgress(true);
+
+    const data = new FormData();
+
+    data.append("submmited_date", new Date());
+    data.append("doc", selectedFile);
+    data.append("submitted_by", userID);
+
+    axios
+      .put(`${URL}documents/${doc._id}`, data)
+      .then((res) => {
+        console.log(res.data);
+        setworkProgress(false);
+        toast("submitted", { type: "success" });
+      })
+      .catch((er) => {
+        toast("Unable to submit ,try again", { type: "error" });
+        setworkProgress(false);
+      });
+  };
+
   const classes = useStyle();
   return (
     <>
+      <ToastContainer />
+      <Alert
+        open={!!error}
+        msg={error}
+        title="Alert!"
+        handleClose={() => {
+          setError("");
+        }}
+      />
       <Header mode={props.mode} handler={props.handler} />
       <Box
         component={Paper}
@@ -138,6 +214,7 @@ function Submit(props) {
                   </Typography>
                 </label>
                 <input
+                  disabled={!submittable}
                   hidden
                   id="image-dp"
                   type={"file"}
@@ -145,54 +222,67 @@ function Submit(props) {
                   // value={selectedFile}
                   name={selectedFile}
                 />
-                <br/>
+                <br />
                 {workprogress && (
-                  <Box sx={{ width: "100%", mb:-3}}>
+                  <Box sx={{ width: "100%", mb: -3 }}>
                     <LinearProgress
-                      variant="determinate"
+                      variant="indeterminate"
                       value={progress}
-                      color="primary"
+                      color="inherit"
                     />
                   </Box>
                 )}
               </Box>
             </Box>
-            <br />
-
-            <Grid
-              container
-              direction="row"
-              alignItems={"center"}
-              justifyContent="right"
-              spacing={2}
+            <Box
+              my={2}
+              sx={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
             >
-              <Grid item>
-                <Button
-                  alignItems="center"
-                  disableElevation
-                  sx={{ color: "#fff", fontFamily: "open sans" }}
-                  variant="contained"
-                  className={classes.btn}
-                  onClick={() => {}}
-                >
-                  Save
-                </Button>
-              </Grid>
-              <Grid item>
-                {visibleremove && (
-                  <Button
-                    disableElevation
-                    sx={{ color: "#fff", fontFamily: "open sans" }}
-                    color="error"
-                    variant="contained"
-                    className={classes.btn}
-                    onClick={onCanceled}
-                  >
-                    Remove
-                  </Button>
-                )}
-              </Grid>
-            </Grid>
+              {
+                <Typography>
+                  {doc
+                    ? "Submitted"
+                    : submittable
+                    ? "Time Reamaining "
+                    : "Overdued"}
+                </Typography>
+              }
+              <Box sx={{ flexGrow: 1 }} />
+              <Button
+                alignItems="center"
+                disableElevation
+                disabled={!submittable}
+                sx={{ color: "#fff", fontFamily: "open sans" }}
+                variant="contained"
+                className={classes.btn}
+                onClick={doc ? edit : submit}
+              >
+                {doc ? "Update" : "Save"}
+              </Button>
+            </Box>
+            {doc && (
+              <Box
+                my={1}
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                <Typography>Submitted by : {doc.submitted_by.name}</Typography>
+                <Typography>
+                  Submitted Date : {dateParser(doc.submmited_date)}
+                </Typography>
+                <Typography>
+                  Submitted Time : {timeParser(doc.submmited_date)}
+                </Typography>
+                <Box sx={{ flexGrow: 1 }} />
+              </Box>
+            )}
           </Box>
         </Container>
       </Box>
