@@ -38,35 +38,6 @@ function Pages(props) {
               element={<DashBoard handler={props.modeHandler} />}
             />
             <Route
-              path="/users"
-              element={<Users handler={props.modeHandler} />}
-            />
-
-            <Route
-              path="/user/:id"
-              element={<User handler={props.modeHandler} />}
-            />
-            <Route
-              path="/Groups/:id"
-              element={<GroupView handler={props.modeHandler} />}
-            />
-            <Route
-              path="/Groups"
-              element={<Groups handler={props.modeHandler} />}
-            />
-            <Route
-              path="/research/grp/:id"
-              element={<Group handler={props.modeHandler} />}
-            />
-            <Route
-              path="/research/sup"
-              element={<ResearchSup handler={props.modeHandler} />}
-            />
-            <Route
-              path="/submission/new"
-              element={<NewSubmission handler={props.modeHandler} />}
-            />
-            <Route
               path="/submission/:id"
               element={<Info handler={props.modeHandler} />}
             />
@@ -74,7 +45,6 @@ function Pages(props) {
               path="/submit/add/:id"
               element={<Submit handler={props.modeHandler} />}
             />
-
             <Route
               path="/chat"
               element={<Chat handler={props.modeHandler} />}
@@ -88,18 +58,55 @@ function Pages(props) {
               path="/profile"
               element={<Navigate replace to="/profile/details" />}
             />
-            <Route
-              path="/Submissions"
-              element={<SubmissionTypes handler={props.modeHandler} />}
-            />
-            <Route
-              path="/Submissions/:id"
-              element={<Submissions handler={props.modeHandler} />}
-            />
-            <Route
-              path="/submissions/std/:id"
-              element={<SubmissionInfo handler={props.modeHandler} />}
-            />
+            {role === "Admin" && (
+              <>
+                <Route
+                  path="/users"
+                  element={<Users handler={props.modeHandler} />}
+                />
+                <Route
+                  path="/user/:id"
+                  element={<User handler={props.modeHandler} />}
+                />
+                <Route
+                  path="/submission/new"
+                  element={<NewSubmission handler={props.modeHandler} />}
+                />
+              </>
+            )}
+            {role !== "Student" && (
+              <>
+                <Route
+                  path="/Groups"
+                  element={<Groups handler={props.modeHandler} />}
+                />
+                <Route
+                  path="/Groups/:id"
+                  element={<GroupView handler={props.modeHandler} />}
+                />
+                <Route
+                  path="/research/sup"
+                  element={<ResearchSup handler={props.modeHandler} />}
+                />
+                <Route
+                  path="/research/grp/:id"
+                  element={<Group handler={props.modeHandler} />}
+                />
+                <Route
+                  path="/Submissions"
+                  element={<SubmissionTypes handler={props.modeHandler} />}
+                />
+                <Route
+                  path="/Submissions/:id"
+                  element={<Submissions handler={props.modeHandler} />}
+                />{" "}
+                <Route
+                  path="/submissions/std/:id"
+                  element={<SubmissionInfo handler={props.modeHandler} />}
+                />
+              </>
+            )}
+            <Route path="*" element={<Navigate replace to="/" />} />
           </Routes>
         </>
       ) : (
