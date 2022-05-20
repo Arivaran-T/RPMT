@@ -27,6 +27,10 @@ const submissionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  due_time: {
+    type: String,
+    required: true,
+  },
   max_size: {
     type: Number,
     default: 10,
