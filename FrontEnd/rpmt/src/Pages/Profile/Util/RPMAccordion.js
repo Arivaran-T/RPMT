@@ -2,8 +2,10 @@ import {
   Accordion,
   AccordionDetails,
   AccordionSummary,
+  Box,
   Collapse,
   List,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
@@ -80,13 +82,28 @@ function RPMAccordion() {
                     );
                   })
                 ) : (
-                  <></>
+                  <>No requests available</>
                 )}
               </TransitionGroup>
             </List>
           </AccordionDetails>
         ) : (
-          <></>
+          <Box px={2}>
+            <Skeleton
+              animation="pulse"
+              variant="rectangular"
+              sx={{ borderRadius: 1, mb: 2 }}
+              width={"100%"}
+              height={50}
+            />
+            <Skeleton
+              animation="pulse"
+              variant="rectangular"
+              sx={{ borderRadius: 1, mb: 2 }}
+              width={"100%"}
+              height={50}
+            />
+          </Box>
         )}
       </Accordion>
     </>
