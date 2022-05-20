@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const fs = require("fs");
 const UserModel = require("../Model/UserModel");
 const GroupModel = require("../Model/GroupModel");
-const mailSender = require("../Utils/mailSender");
+const { mailSender } = require("../Utils/mailSender");
 
 //user register
 exports.Register = (req, res) => {
@@ -303,7 +303,8 @@ exports.ResetPassword = (req, res) => {
 
 //check email exist
 exports.CheckEmail = (req, res) => {
-  const { email } = req.body;
+  const { email } = req.params;
+
   const OTP = Math.floor(1000 + Math.random() * 9000);
 
   UserModel.findOneAndUpdate({ email }, { $set: { OTP } })
@@ -312,7 +313,6 @@ exports.CheckEmail = (req, res) => {
         const to = data.email;
         const subject = "Reset Your Password";
         const text = `Please enter OTP : <b>${OTP}</b> to complete your password reset request.<br/>Thank you`;
-
         //send otp to mail
         const val = mailSender(to, subject, text);
 
@@ -322,13 +322,15 @@ exports.CheckEmail = (req, res) => {
       }
     })
     .catch((er) => {
+      console.log(er);
       return res.status(404).json({ exist: false });
     });
 };
 
 //check OTP
 exports.CheckOTP = (req, res) => {
-  const { _id, OTP } = req.body;
+  const { _id } = req.params;
+  const { OTP } = req.body;
 
   UserModel.findById({ _id }, { OTP: 1 })
     .then((data) => {

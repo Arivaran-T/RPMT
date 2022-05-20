@@ -19,8 +19,8 @@ router
   .delete(UserCtrl.DeleteUser);
 
 //forget password
-router.route("/password/email").get(UserCtrl.CheckEmail);
-router.route("/password/otp").get(UserCtrl.CheckOTP);
+router.route("/password/:email").get(UserCtrl.CheckEmail);
+router.route("/password/:_id").post(UserCtrl.CheckOTP);
 
 //single user password
 router
