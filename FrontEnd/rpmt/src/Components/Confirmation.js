@@ -26,7 +26,7 @@ function Confirmation(props) {
           <DialogContentText>Do you Want to Remove</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={props.handleClose}>Yes</Button>
+          <Button onClick={props.handleYes}>Yes</Button>
           <Button onClick={props.handleClose}>No</Button>
         </DialogActions>
       </Dialog>

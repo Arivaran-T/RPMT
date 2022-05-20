@@ -8,6 +8,17 @@ const authAdmin = require("../Middleware/authAdmin");
 
 router.use(fileUpload());
 
+//admin
+//get all grps
+router.route("/").get(GroupCtrl.GetGroups);
+//get single grp
+router.route("/admin/:_id").get(GroupCtrl.GetAdminGroup);
+//add & remove pannel
+router
+  .route("/pannel/:_id/:staff_id")
+  .put(GroupCtrl.AddPannel)
+  .delete(GroupCtrl.RemovePannel);
+
 //cancel/accept request
 router
   .route("/:_id/requests/:id")
@@ -19,9 +30,6 @@ router.route("/:_id").get(GroupCtrl.GetGroup).put().post(GroupCtrl.AddGroup);
 
 //grp requests
 router.route("/:_id/:role/:user_id").put(GroupCtrl.Request);
-
-//all users
-router.route("/").get();
 
 //single user
 router.route("/users/:_id").get(GroupCtrl.GetUserGroup);

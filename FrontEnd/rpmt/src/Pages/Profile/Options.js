@@ -63,20 +63,26 @@ function Options(props) {
             </Avatar>
           </Grid>
           <Btn link="/profile/details" title="Profile" />
-          <Btn
-            link={
-              user === "Staff" ||
-              user === "Supervisor" ||
-              user === "CoSupervisor"
-                ? "/research/sup"
-                : "/profile/research"
-            }
-            title="Research"
-          />
-          <Btn
-            link={user !== "Student" ? "/Submissions" : "/profile/submissions"}
-            title="Submission"
-          />
+          {user !== "Admin" && (
+            <Btn
+              link={
+                user === "Staff" ||
+                user === "Supervisor" ||
+                user === "CoSupervisor"
+                  ? "/research/sup"
+                  : "/profile/research"
+              }
+              title="Research"
+            />
+          )}
+          {user !== "Admin" && (
+            <Btn
+              link={
+                user !== "Student" ? "/Submissions" : "/profile/submissions"
+              }
+              title="Submission"
+            />
+          )}
           {user === "Admin" && <Btn link="/Users" title="Users" />}
           {user === "Admin" && <Btn link="/Groups" title="Groups" />}
         </Box>

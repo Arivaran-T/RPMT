@@ -130,13 +130,13 @@ const Request = (props) => {
         <Typography sx={{ color: "#ccc", fontSize: 15 }}>
           Supervisor :
           <span style={{ color: "#E28743" }}>
-            {props.data.supervisor ? props.data.supervisor : "N/A"}
+            {props.data.supervisor ? props.data.supervisor.name : "N/A"}
           </span>
         </Typography>
         <Typography sx={{ color: "#ccc", fontSize: 15 }}>
           Co-Supervisor :{" "}
           <span style={{ color: "#E28743" }}>
-            {props.data.coSupervisor ? props.data.coSupervisor : "N/A"}
+            {props.data.coSupervisor ? props.data.coSupervisor.name : "N/A"}
           </span>
         </Typography>
         <Typography sx={{ color: "#ccc", fontSize: 15 }}>

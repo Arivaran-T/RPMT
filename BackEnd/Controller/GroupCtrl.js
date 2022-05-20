@@ -118,8 +118,6 @@ exports.UpdateRequest = (req, res) => {
   const { _id, id } = req.params;
   const { status, role } = req.body;
 
-  console.log("here");
-
   if (status === "accept") {
     UserModel.findByIdAndUpdate(
       { _id },
@@ -158,4 +156,85 @@ exports.UpdateRequest = (req, res) => {
         return res.status(404).json({ [status]: false });
       });
   }
+};
+
+//get all group
+exports.GetGroups = (req, res) => {
+  GroupModel.find({})
+    .populate({ path: "leader", select: "name" })
+    .populate({ path: "supervisor", select: "name" })
+    .populate({ path: "coSupervisor", select: "name" })
+    .populate({ path: "members", select: "name" })
+    .then((data) => {
+      return res.status(200).json(data);
+    })
+    .catch((er) => {
+      console.log(er);
+    });
+};
+
+//admin get single group
+exports.GetAdminGroup = (req, res) => {
+  const { _id } = req.params;
+
+  GroupModel.findById({ _id })
+    .populate({ path: "leader", select: "name" })
+    .populate({ path: "supervisor", select: "name" })
+    .populate({ path: "coSupervisor", select: "name" })
+    .populate({ path: "members", select: "name" })
+    .populate({ path: "pannel", select: "name" })
+    .then((data) => {
+      if (data) {
+        return res.status(200).json(data);
+      } else {
+        return res.status(404).json({ fetched: false });
+      }
+    })
+    .catch((er) => {
+      return res.status(404).json({ fetched: false });
+    });
+};
+
+//add pannel
+exports.AddPannel = (req, res) => {
+  const { _id, staff_id } = req.params;
+
+  GroupModel.findByIdAndUpdate({ _id }, { $push: { pannel: staff_id } })
+    .then((data) => {
+      UserModel.findByIdAndUpdate(
+        { _id: staff_id },
+        { $push: { pannel: _id } },
+        { upsert: true }
+      )
+        .then((data1) => {
+          return res.status(200).json({ added: true });
+        })
+        .catch((er) => {
+          return res.status(404).json({ added: false });
+        });
+    })
+    .catch((er) => {
+      return res.status(404).json({ added: false });
+    });
+};
+
+//remove from pannel
+exports.RemovePannel = (req, res) => {
+  const { _id, staff_id } = req.params;
+
+  GroupModel.findByIdAndUpdate({ _id }, { $pull: { pannel: staff_id } })
+    .then((data) => {
+      UserModel.findByIdAndUpdate({ _id: staff_id }, { $pull: { pannel: _id } })
+        .then((data1) => {
+          return res.status(200).json({ removed: true });
+        })
+        .catch((er) => {
+          console.log(er);
+          return res.status(404).json({ removed: false });
+        });
+    })
+    .catch((er) => {
+      console.log(er);
+      return res.status(404).json({ removed: false });
+    });
 };
