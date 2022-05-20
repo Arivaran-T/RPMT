@@ -69,6 +69,7 @@ function OwnGroup() {
     axios
       .get(`${URL}groups/users/${userID}`)
       .then((res) => {
+        console.log(res.data.data);
         if (res.data.data) {
           setgrp_id(res.data.data._id);
           setLoaded(true);
@@ -86,16 +87,10 @@ function OwnGroup() {
             res.data.data.coSupervisor && res.data.data.coSupervisor.name
           );
           setRSupervisor(
-            res.data.data.requested !== undefined &&
-              res.data.data.requested.supervisor !== undefined
-              ? true
-              : false
+            res.data.data.requested.supervisor !== null ? true : false
           );
           setRCoSupervisor(
-            res.data.data.requested !== undefined &&
-              res.data.data.requested.coSupervisor !== undefined
-              ? true
-              : false
+            res.data.data.requested.coSupervisor !== null ? true : false
           );
         } else {
           setHasGroup(false);
@@ -298,7 +293,16 @@ function OwnGroup() {
                   </Typography>
                 </Grid>
                 <Grid item xs={8} sx={{ textAlign: "left", my: 2 }}>
-                  {!requestedSupervisor ? (
+                  {/* //TODO */}
+                  {supervisor ? (
+                    <Typography variant="h4" sx={{ color: "#888" }}>
+                      {supervisor}
+                    </Typography>
+                  ) : requestedSupervisor ? (
+                    <Typography variant="h4" sx={{ color: "#888" }}>
+                      Requested
+                    </Typography>
+                  ) : (
                     <RMTbtn
                       disabled={userID !== leaderID}
                       href={"/profile/supervisor-" + grp_id}
@@ -306,14 +310,6 @@ function OwnGroup() {
                       handler={() => {}}
                       wd="100%"
                     />
-                  ) : supervisor ? (
-                    <Typography variant="h4" sx={{ color: "#888" }}>
-                      {supervisor}
-                    </Typography>
-                  ) : (
-                    <Typography variant="h4" sx={{ color: "#888" }}>
-                      Requested
-                    </Typography>
                   )}
                 </Grid>
               </Grid>
@@ -328,7 +324,15 @@ function OwnGroup() {
                   </Typography>
                 </Grid>
                 <Grid item xs={8} sx={{ textAlign: "left" }}>
-                  {!requestedCoSupervisor ? (
+                  {coSupervisor ? (
+                    <Typography variant="h4" sx={{ color: "#fff" }}>
+                      {coSupervisor}
+                    </Typography>
+                  ) : requestedCoSupervisor ? (
+                    <Typography variant="h4" sx={{ color: "#888" }}>
+                      Requested
+                    </Typography>
+                  ) : (
                     <RMTbtn
                       disabled={userID !== leaderID}
                       href={"/profile/coSupervisor-" + grp_id}
@@ -336,14 +340,6 @@ function OwnGroup() {
                       handler={() => {}}
                       wd="100%"
                     />
-                  ) : coSupervisor ? (
-                    <Typography variant="h4" sx={{ color: "#fff" }}>
-                      {coSupervisor}
-                    </Typography>
-                  ) : (
-                    <Typography variant="h4" sx={{ color: "#888" }}>
-                      Requested
-                    </Typography>
                   )}
                 </Grid>
               </Grid>

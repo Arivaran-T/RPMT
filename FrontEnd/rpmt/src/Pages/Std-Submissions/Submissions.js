@@ -2,12 +2,10 @@ import {
   Paper,
   Box,
   Grid,
-  Checkbox,
-  Typography,
   TextField,
-  Button,
   IconButton,
   FormControl,
+  Skeleton,
 } from "@mui/material";
 import { Container } from "@mui/material";
 import Heading from "../../Components/Heading";
@@ -16,14 +14,15 @@ import Submission from "./Submission";
 import SearchIcon from "@mui/icons-material/Search";
 import { makeStyles } from "@mui/styles";
 
+//react
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 const useStyle = makeStyles({
-  labels: {
-    color: "#fff",
-    fontFamily: "open sans",
-    fontWeight: "700",
-    fontSize: 15,
-    cursor: "pointer",
-  },
   inputs: {
     color: "#99ccff",
     background: "rgb(6, 74, 130)",
@@ -32,63 +31,80 @@ const useStyle = makeStyles({
     fontWeight: "600",
     letterSpacing: ".5px",
   },
-  btn: {
-    "&:hover": {
-      backgroundColor: "#fff",
-      color: "#3c52b2",
-    },
-  },
 });
 
 function AllSubmissions(props) {
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //user data
+  const { token, userID, role } = useSelector((state) => state.loging);
+
+  //state
+  const [submissions, setSubmissions] = useState([]);
+  const [isLoaded, setLoaded] = useState(false);
+
   const classes = useStyle();
+
+  //useEffect call
+  useEffect(() => {
+    axios
+      .get(`${URL}documents/staff/${userID}`)
+      .then((res) => {
+        console.log(res.data);
+        setLoaded(true);
+        setSubmissions(res.data);
+      })
+      .catch((er) => {
+        setLoaded(true);
+      });
+  }, []);
+
   return (
     <>
       <Header mode={props.mode} handler={props.handler} />
-
       <Paper elevation={2} square>
         <Box width="100%" minHeight={"83vh"}>
-          <Container maxWidth="md" sx={{ textAlign: "center" }}>
+          <Container maxWidth="sm" sx={{ textAlign: "center" }}>
             <Box py={3}>
               <Paper elevation={3}>
                 <Box p={1} sx={{ bgcolor: "#073050", borderRadius: "3px" }}>
                   <Heading heading={`All Submissions`} />
-                  <Box mt={2} width="100%">
-                    <Grid
-                      container
-                      direction="row"
-                      justifyContent="end"
-                      alignItems={"center"}
-                      spacing={0.6}
-                    >
-                      <Grid item xs={9}>
-                        <FormControl fullWidth>
-                          <TextField
-                            fullWidth
-                            color="info"
-                            variant="outlined"
-                            margin="none"
-                            size="small"
-                            className={classes.inputs}
-                            inputProps={{ className: classes.inputs }}
-                          />
-                        </FormControl>
-                      </Grid>
-                      <Grid item xs={3}>
-                        <Box borderRadius={2} bgcolor="#1074C6">
-                          <IconButton>
-                            <SearchIcon />
-                          </IconButton>
-                        </Box>
-                      </Grid>
-                    </Grid>
-                    <Box mt={4} />
-                  </Box>
-
-                  <Submission />
-                  <Submission />
-                  <Submission />
-                  <Submission />
+                  <Container maxWidth="sm">
+                    {isLoaded ? (
+                      submissions.length > 0 ? (
+                        submissions.map((row, index) => {
+                          return <Submission key={index} data={row} />;
+                        })
+                      ) : (
+                        <>No data available</>
+                      )
+                    ) : (
+                      <>
+                        <Skeleton
+                          animation="pulse"
+                          variant="rectangular"
+                          sx={{ borderRadius: 1, mb: 2 }}
+                          width={"100%"}
+                          height={50}
+                        />
+                        <Skeleton
+                          animation="pulse"
+                          variant="rectangular"
+                          sx={{ borderRadius: 1, mb: 2 }}
+                          width={"100%"}
+                          height={50}
+                        />
+                        <Skeleton
+                          animation="pulse"
+                          variant="rectangular"
+                          sx={{ borderRadius: 1, mb: 2 }}
+                          width={"100%"}
+                          height={50}
+                        />
+                      </>
+                    )}
+                  </Container>
                 </Box>
               </Paper>
             </Box>

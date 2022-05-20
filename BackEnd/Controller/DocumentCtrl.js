@@ -23,7 +23,6 @@ exports.AddDocument = (req, res) => {
 
         UserModel.findById({ _id: submitted_by }, { group_id: 1 })
           .then((data) => {
-
             const newDocu = new DocumentModel({
               submitted_by,
               group_id: data.group_id,
@@ -127,6 +126,12 @@ exports.GetDoc = (req, res) => {
   const { _id } = req.params;
 
   DocumentModel.findById({ _id })
+    // .populate({ path: "group_id" })
+    .populate({
+      path: "submission_id",
+      select: "document marking_scheme title description",
+    })
+    .populate({ path: "submitted_by", select: "name" })
     .then((data) => {
       if (data._id) {
         return res.status(200).json({ data });
@@ -181,4 +186,70 @@ exports.GetSubmissionDoc = (req, res) => {
         });
     })
     .catch((er) => {});
+};
+
+//get users all doc
+exports.GetUserDoc = (req, res) => {
+  const { _id } = req.params;
+  UserModel.findById({ _id }, { group_id: 1 })
+    .then((id) => {
+      DocumentModel.find({ group_id: id.group_id }, { url: 0 })
+        .populate({ path: "submission_id", select: "title" })
+        .then((data) => {
+          if (data) {
+            return res.status(200).json(data);
+          } else {
+            return res.status(404).json({ fetched: false });
+          }
+        })
+        .catch((er) => {
+          return res.status(404).json({ fetched: false });
+        });
+    })
+    .catch((er) => {
+      return res.status(404).json({ fetched: false });
+    });
+};
+
+//get staff doc
+exports.GetStaffDoc = (req, res) => {
+  const { _id } = req.params;
+
+  UserModel.findById({ _id }, { groups: 1, pannel: 1 })
+    .then((data) => {
+      const array_of_grp = [...data.pannel, ...data.groups];
+
+      DocumentModel.find({ group_id: { $in: array_of_grp } })
+        .then((data) => {
+          if (data) {
+            return res.status(200).json(data);
+          } else {
+            return res.status(404).json({ fetched: false });
+          }
+        })
+        .catch((er) => {
+          return res.status(404).json({ fetched: false });
+        });
+    })
+    .catch((er) => {
+      return res.status(404).json({ fetched: false });
+    });
+};
+
+//add grade
+exports.AddGrade = (req, res) => {
+  const { _id } = req.params;
+
+  const { grade, comments } = req.body;
+
+  DocumentModel.findByIdAndUpdate(
+    { _id },
+    { $set: { grade: grade, comments: comments, status: "marked" } }
+  )
+    .then((data) => {
+      return res.status(200).json({ added: true });
+    })
+    .catch((er) => {
+      return res.status(404).json({ added: false });
+    });
 };

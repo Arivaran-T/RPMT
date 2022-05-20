@@ -1,8 +1,34 @@
 import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
 
+//react
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function UserData(props) {
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //user data
+  const { token, userID, role } = useSelector((state) => state.loging);
+
+  const request = () => {
+    axios
+      .put(`${URL}groups/${props.data._id}/Student/${userID}`)
+      .then((res) => {
+        toast("Request sent to " + props.data.name, { type: "success" });
+      })
+      .catch((er) => {
+        toast("Unable to send request, try again", { type: "error" });
+      });
+  };
+
   return (
     <>
+      <ToastContainer />
       <Box my={1} mx={2} p={1.2} px={2} bgcolor="#eee" borderRadius={1}>
         <Grid
           container
@@ -19,7 +45,7 @@ function UserData(props) {
             >
               <Grid item>
                 <Avatar src="" alt="dp">
-                  U
+                  {props.data.name.charAt(0)}
                 </Avatar>
               </Grid>
               <Grid item>
@@ -31,7 +57,7 @@ function UserData(props) {
                 >
                   <Grid>
                     <Typography variant="h4" sx={{ color: "#0C4D82" }}>
-                      User Name
+                      {props.data.name}
                     </Typography>
                   </Grid>
                   <Grid>
@@ -40,20 +66,35 @@ function UserData(props) {
                       display={{ xs: "block", sm: "none" }}
                       sx={{ color: "#333" }}
                     >
-                      <Typography variant="h4">Research Field</Typography>
+                      <Typography variant="h4">
+                        {props.data.research_Field}
+                      </Typography>
                     </Grid>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
-          <Grid item xs={0} sm={4} display={{ xs: "none", sm: "block" }}>
-            <Typography variant="h4" sx={{ color: "#333" }}>
-              Research Field
+          <Grid
+            item
+            xs={0}
+            sm={4}
+            display={{ xs: "none", sm: "block", textAlign: "left" }}
+          >
+            <Typography sx={{ color: "#333", fontSize: 15 }}>
+              {props.data.research_Field}
+            </Typography>
+            <Typography sx={{ color: "#333", fontSize: 15 }}>
+              {props.data.research_Topic.name}
             </Typography>
           </Grid>
-          <Grid item sm={4} xs={5} sx={{textAlign:"right"}}>
-            <Button variant="contained" disableElevation color="secondary">
+          <Grid item sm={4} xs={5} sx={{ textAlign: "right" }}>
+            <Button
+              variant="contained"
+              disableElevation
+              color="secondary"
+              onClick={request}
+            >
               <Typography variant="subtitle2">Request</Typography>
             </Button>
           </Grid>

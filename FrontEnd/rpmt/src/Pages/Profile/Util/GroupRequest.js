@@ -1,8 +1,35 @@
 import { Avatar, Box, Button, Grid, Typography } from "@mui/material";
+//react
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function GroupRequest(props) {
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //user data
+  const { token, userID, role } = useSelector((state) => state.loging);
+
+  //handle req
+  const handleRequest = (status) => {
+    axios
+      .patch(`${URL}groups/${props.data._id}/requests/${props.grp_id}`, {
+        action: status,
+      })
+      .then((res) => {
+        toast("request successfull handled", { type: "success" });
+      })
+      .catch((er) => {
+        toast("unable to handle the request, try again", { type: "error" });
+      });
+  };
   return (
     <Box my={1} p={1.2} bgcolor="#eee" borderRadius={3}>
+      <ToastContainer />
       <Grid
         container
         direction={"row"}
@@ -17,8 +44,8 @@ function GroupRequest(props) {
             alignItems="center"
           >
             <Grid item>
-              <Avatar src="" alt="dp">
-                U
+              <Avatar src={props.data.dp} alt="dp">
+                {props.data.name.charAt(0)}
               </Avatar>
             </Grid>
             <Grid item>
@@ -30,25 +57,38 @@ function GroupRequest(props) {
               >
                 <Grid>
                   <Typography variant="h4" sx={{ color: "#0C4D82" }}>
-                    User Name
+                    {props.data.name}
                   </Typography>
                 </Grid>
                 <Grid>
                   <Grid
                     item
                     display={{ xs: "block", sm: "none" }}
-                    sx={{ color: "#333" }}
+                    sx={{ color: "#333", textAlign: "left" }}
                   >
-                    <Typography variant="h4">Research Field</Typography>
+                    <Typography sx={{ color: "#333", fontSize: 12 }}>
+                      {props.data.mobile_number}
+                    </Typography>
+                    <Typography sx={{ color: "#333", fontSize: 12 }}>
+                      {props.data.email}
+                    </Typography>
                   </Grid>
                 </Grid>
               </Grid>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={0} sm={4} display={{ xs: "none", sm: "block" }}>
-          <Typography variant="h4" sx={{ color: "#333" }}>
-            Research Field
+        <Grid
+          item
+          xs={0}
+          sm={4}
+          display={{ xs: "none", sm: "block", textAlign: "left" }}
+        >
+          <Typography sx={{ color: "#333", fontSize: 12 }}>
+            {props.data.mobile_number}
+          </Typography>
+          <Typography sx={{ color: "#333", fontSize: 12 }}>
+            {props.data.email}
           </Typography>
         </Grid>
         <Grid item sm={4} xs={7}>
@@ -59,7 +99,14 @@ function GroupRequest(props) {
             spacing={2}
           >
             <Grid item>
-              <Button variant="contained" disableElevation color="secondary">
+              <Button
+                onClick={() => {
+                  handleRequest("accept");
+                }}
+                variant="contained"
+                disableElevation
+                color="secondary"
+              >
                 <Typography variant="subtitle2">Accept</Typography>
               </Button>
             </Grid>
@@ -68,7 +115,9 @@ function GroupRequest(props) {
                 variant="contained"
                 disableElevation
                 color="error"
-                onClick={props.reject}
+                onClick={() => {
+                  handleRequest("reject");
+                }}
               >
                 <Typography variant="subtitle2">Reject</Typography>
               </Button>

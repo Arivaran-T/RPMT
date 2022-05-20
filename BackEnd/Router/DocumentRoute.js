@@ -8,6 +8,15 @@ const authAdmin = require("../Middleware/authAdmin");
 
 router.use(fileUpload());
 
+//user 
+router.route("/users/:_id").get(DocumentCtrl.GetUserDoc);
+
+//staff 
+router
+  .route("/staff/:_id")
+  .get(DocumentCtrl.GetStaffDoc)
+  .put(DocumentCtrl.AddGrade);
+
 //submision
 router.route("/:_id/:user_id").get(DocumentCtrl.GetSubmissionDoc);
 

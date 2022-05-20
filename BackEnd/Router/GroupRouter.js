@@ -8,11 +8,16 @@ const authAdmin = require("../Middleware/authAdmin");
 
 router.use(fileUpload());
 
+//search group
+router.route("/searches/:value").get(GroupCtrl.SearchGroup);
+
+//topic status
+router.route("/topics/:_id").get(GroupCtrl.GetStatus).put().patch();
+
 //admin
-//get all grps
-router.route("/").get(GroupCtrl.GetGroups);
-//get single grp
-router.route("/admin/:_id").get(GroupCtrl.GetAdminGroup);
+router.route("/").get(GroupCtrl.GetGroups); //get all grps
+router.route("/admin/:_id").get(GroupCtrl.GetAdminGroup); //get single grp
+
 //add & remove pannel
 router
   .route("/pannel/:_id/:staff_id")
@@ -21,15 +26,19 @@ router
 
 //cancel/accept request
 router
-  .route("/:_id/requests/:id")
+  .route("/:user_id/requests/:grp_id")
   .put(GroupCtrl.UpdateRequest) //for staff
-  .patch(); //for groups
+  .patch(GroupCtrl.HandleRequest) //for groups
+  .delete(GroupCtrl.LeftGroup); //remove from group
+
+//get group requests data
+router.route("/requests/:_id").get(GroupCtrl.GetRequestedStd);
 
 //single group
 router.route("/:_id").get(GroupCtrl.GetGroup).put().post(GroupCtrl.AddGroup);
 
 //grp requests
-router.route("/:_id/:role/:user_id").put(GroupCtrl.Request);
+router.route("/:group_id/:role/:user_id").put(GroupCtrl.Request);
 
 //single user
 router.route("/users/:_id").get(GroupCtrl.GetUserGroup);

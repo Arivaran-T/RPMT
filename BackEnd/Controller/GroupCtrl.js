@@ -41,10 +41,10 @@ exports.GetGroup = (req, res) => {
   const filter = supervisor ? "supervisor" : "cosupervisor";
 
   if (filter) {
-    GroupModel.findById({ _id }, { filter: 1, requested: 1 })
+    GroupModel.findById({ _id }, { [filter]: 1, requested: 1 })
       .then((data) => {
         if (data[filter]) {
-          return res.status(200).json({ filter: true });
+          return res.status(200).json({ [filter]: true });
         } else if (data.requested && data.requested[filter]) {
           return res.status(200).json({ Requested: true });
         } else {
@@ -87,35 +87,45 @@ exports.GetUserGroup = (req, res) => {
 //request supervisor
 exports.Request = (req, res) => {
   //prrameters
-  const { _id, role, user_id } = req.params;
+  const { group_id: _id, role, user_id } = req.params;
 
-  GroupModel.findByIdAndUpdate(
-    { _id },
-    { $set: { [`requested.${role}`]: user_id } },
-    { upsert: true }
-  )
-    .then((data) => {
-      //update user model
-      UserModel.findByIdAndUpdate(
-        { _id: user_id },
-        { $push: { requests: { id: _id, role: role } } }
-      )
-        .then((data) => {
-          return res.status(200).json({ requested: true });
-        })
-        .catch((er) => {
-          return res.status(404).json({ requested: false });
-        });
-    })
-    .catch((er) => {
-      return res.status(404).json({ requested: false });
-      console.log(er);
-    });
+  if (role === "Student") {
+    GroupModel.findByIdAndUpdate({ _id }, { $push: { requests: user_id } })
+      .then((data) => {
+        return res.status(200).json({ requested: true });
+      })
+      .catch((er) => {
+        return res.status(404).json({ requested: false });
+      });
+  } else {
+    GroupModel.findByIdAndUpdate(
+      { _id },
+      { $set: { [`requested.${role}`]: user_id } },
+      { upsert: true }
+    )
+      .then((data) => {
+        //update user model
+        UserModel.findByIdAndUpdate(
+          { _id: user_id },
+          { $push: { requests: { id: _id, role: role } } }
+        )
+          .then((data) => {
+            return res.status(200).json({ requested: true });
+          })
+          .catch((er) => {
+            return res.status(404).json({ requested: false });
+          });
+      })
+      .catch((er) => {
+        return res.status(404).json({ requested: false });
+        console.log(er);
+      });
+  }
 };
 
 //accept or reject request
 exports.UpdateRequest = (req, res) => {
-  const { _id, id } = req.params;
+  const { user_id: _id, grp_id: id } = req.params;
   const { status, role } = req.body;
 
   if (status === "accept") {
@@ -139,7 +149,7 @@ exports.UpdateRequest = (req, res) => {
         return res.status(404).json({ [status]: false });
       });
   } else if (status === "reject") {
-    UserModel.findByIdAndUpdate({ _id }, { $pull: { requests: id } })
+    UserModel.findByIdAndUpdate({ _id }, { $pull: { requests: { id: id } } })
       .then((data) => {
         GroupModel.findByIdAndUpdate(
           { _id: id },
@@ -237,4 +247,124 @@ exports.RemovePannel = (req, res) => {
       console.log(er);
       return res.status(404).json({ removed: false });
     });
+};
+
+//remove from grp
+exports.LeftGroup = (req, res) => {
+  const { user_id, grp_id } = req.params;
+
+  UserModel.findByIdAndUpdate({ _id: user_id }, { $pull: { groups: grp_id } })
+    .then((data) => {
+      //grp
+      GroupModel.findByIdAndUpdate({ _id: grp_id })
+        .then((data) => {
+          if (data.supervisor == user_id) {
+            GroupModel.findByIdAndUpdate({ _id: grp_id }, { supervisor: null })
+              .then((data) => {
+                return res.status(200).json({ left: true });
+              })
+              .catch((er) => {
+                return res.status(404).json({ left: false });
+              });
+          } else if (data.coSupervisor == user_id) {
+            GroupModel.findByIdAndUpdate(
+              { _id: grp_id },
+              { coSupervisor: null }
+            )
+              .then((data) => {
+                return res.status(200).json({ left: true });
+              })
+              .catch((er) => {
+                return res.status(404).json({ left: false });
+              });
+          }
+        })
+        .catch((er) => {
+          return res.status(404).json({ left: false });
+        });
+    })
+    .catch((er) => {
+      return res.status(404).json({ left: false });
+    });
+};
+
+//get topic status
+exports.GetStatus = (req, res) => {
+  const { _id } = req.params;
+
+  GroupModel.findById({ _id }, { research_Topic: 1 })
+    .then((data) => {
+      return res.status(200).json({ status: data.research_Topic.status });
+    })
+    .catch((er) => {
+      console.log(er);
+      return res.status(404).json({ fetched: false });
+    });
+};
+
+//search group
+exports.SearchGroup = (req, res) => {
+  const { value } = req.params;
+
+  GroupModel.find({ name: { $regex: "^" + value } })
+    .then((data) => {
+      return res.status(200).json(data);
+    })
+    .catch((er) => {
+      return res.status(404).json({ fetched: false });
+    });
+};
+
+//get all requested students
+exports.GetRequestedStd = (req, res) => {
+  const { _id } = req.params;
+
+  GroupModel.findById({ _id })
+    .populate({
+      path: "requests",
+      select: "name mobile_number email gender dp",
+    })
+    .then((data) => {
+      return res.status(200).json(data.requests);
+    })
+    .catch((er) => {
+      return res.status(404).json({ fetched: false });
+    });
+};
+
+//handle student request
+exports.HandleRequest = (req, res) => {
+  const { user_id, grp_id } = req.params;
+  const { action } = req.body;
+
+  if (action === "accept") {
+    GroupModel.findByIdAndUpdate(
+      { _id: grp_id },
+      { $pull: { requests: user_id }, $push: { members: user_id } }
+    )
+      .then((data) => {
+        //handle user
+        UserModel.findByIdAndUpdate({ _id: user_id }, { group_id: grp_id })
+          .then((data) => {
+            return res.status(200).json({ updated: true });
+          })
+          .catch((er) => {
+            return res.status(404).json({ updated: false });
+          });
+      })
+      .catch((er) => {
+        return res.status(404).json({ updated: false });
+      });
+  } else if (action === "reject") {
+    GroupModel.findByIdAndUpdate(
+      { _id: grp_id },
+      { $pull: { requests: user_id } }
+    )
+      .then((data) => {
+        return res.status(200).json({ updated: true });
+      })
+      .catch((er) => {
+        return res.status(404).json({ updated: false });
+      });
+  }
 };

@@ -70,11 +70,6 @@ function Pages(props) {
               path="/submission/:id"
               element={<Info handler={props.modeHandler} />}
             />
-            {/* <Route
-              path="/submit/:id"
-              element={<Submission handler={props.modeHandler} />}
-            /> */}
-            {/* {remove} */}
             <Route
               path="/submit/add/:id"
               element={<Submit handler={props.modeHandler} />}

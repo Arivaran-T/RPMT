@@ -1,73 +1,75 @@
-import { Grid, Typography } from "@mui/material";
+import { Grid, Skeleton, Typography } from "@mui/material";
 import { Box } from "@mui/system";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useSelector } from "react-redux";
 
-function ASubmission() {
+import { dateParser } from "../../Utils/TimeFormatter";
+
+function ASubmission(props) {
   let history = useNavigate();
+
   const submissionHandler = () => {
-    history("/submissions/std/ww");
+    history("/submissions/std/" + props.data._id);
   };
+
+  const [group, setGroup] = useState();
+  const [isLoaded, setLoaded] = useState(false);
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //user data
+  const { token, userID, role } = useSelector((state) => state.loging);
+
+  useEffect(() => {
+    axios
+      .get(`${URL}groups/admin/${props.data.group_id}`)
+      .then((res) => {
+        console.log(res.data);
+        setGroup(res.data);
+        setLoaded(true);
+      })
+      .catch((er) => {
+        setLoaded(true);
+      });
+  }, []);
+
   return (
     <>
-      <Box
-        my={1}
-        mx={2}
-        p={1.2}
-        px={2}
-        bgcolor="#1385E1"
-        borderRadius={1}
-        onClick={submissionHandler}
-      >
-        <Grid
-          container
-          direction={"row"}
-          justifyContent="start"
-          alignItems={"center"}
+      {isLoaded ? (
+        <Box
+          my={1}
+          mx={2}
+          p={1.2}
+          px={2}
+          bgcolor="#1385E1"
+          borderRadius={1}
+          onClick={submissionHandler}
+          sx={{ display: "flex", flexDirection: "row", cursor: "pointer" }}
         >
-          <Grid item xs={7} sm={4}>
-            <Grid
-              container
-              justifyContent={"start"}
-              spacing={1}
-              alignItems="center"
-            >
-              <Grid item>
-                <Grid
-                  container
-                  justifyContent={"start"}
-                  direction="column"
-                  alignItems={"start"}
-                >
-                  <Grid>
-                    <Typography variant="h4" sx={{ color: "#FFFFFF" }}>
-                      Group ID
-                    </Typography>
-                  </Grid>
-                  <Grid>
-                    <Grid
-                      item
-                      display={{ xs: "block", sm: "none" }}
-                      sx={{ color: "#FFFFFF" }}
-                    >
-                      <Typography variant="h4">Group Name</Typography>
-                    </Grid>
-                  </Grid>
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-          <Grid item xs={0} sm={4} display={{ xs: "none", sm: "block" }}>
-            <Typography variant="h4" sx={{ color: "#FFFFFF" }}>
-              Group Name
-            </Typography>
-          </Grid>
-          <Grid item sm={4} xs={5} sx={{ textAlign: "right" }}>
-            <Typography variant="h4" sx={{ color: "#FFFFFF" }}>
-              Other Info
-            </Typography>
-          </Grid>
-        </Grid>
-      </Box>
+          <Typography variant="h4" sx={{ color: "#FFFFFF" }}>
+            {group.name}
+          </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          <Typography variant="h4">
+            {dateParser(props.data.submmited_date)}
+          </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          <Typography variant="h4" sx={{ color: "#333" }}>
+            {props.data.status}
+          </Typography>
+        </Box>
+      ) : (
+        <Skeleton
+          animation="pulse"
+          variant="rectangular"
+          sx={{ borderRadius: 1, mb: 2 }}
+          width={"100%"}
+          height={50}
+        />
+      )}
     </>
   );
 }
