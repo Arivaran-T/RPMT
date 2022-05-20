@@ -6,6 +6,7 @@ import {
   IconButton,
   Pagination,
   Paper,
+  Skeleton,
   TextField,
   Tooltip,
   Typography,
@@ -14,10 +15,111 @@ import Header from "../../Components/Header";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Confirmation from "../../Components/Confirmation";
+
+//react
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Users(props) {
+  //user data
+  const { token, userID } = useSelector((state) => state.loging);
+
+  //pagination
+  const [page, setPage] = useState(1);
+  const [count, setCount] = useState(1);
+
+  //data
+  const [users, setUsers] = useState([]);
+  const [isLoaded, setLoaded] = useState(false);
+  const [isDeleteClicked, setClicked] = useState(false);
+  const [search, setSearch] = useState("");
+
+  //deleting user data
+  const [id, setID] = useState("");
+  const [index, setIndex] = useState("");
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //useEffect call
+  useEffect(() => {
+    setPage(1);
+    axios
+      .get(`${URL}users?page=${page}`)
+      .then((res) => {
+        setLoaded(true);
+        setUsers(res.data.data);
+        setCount(Math.ceil(+res.data.count / 20));
+      })
+      .catch((er) => {
+        setLoaded(true);
+      });
+  }, [page]);
+
+  //page change[pagination]
+  const handleChange = (event, value) => {
+    setPage(value);
+  };
+
+  //click delete
+  const clickDelete = (id, index) => {
+    setID(id);
+    setIndex(index);
+    setClicked(true);
+  };
+
+  //handle yes
+  const DeleteUser = () => {
+    axios
+      .delete(`${URL}users/${id}`)
+      .then((res) => {
+        setUsers((pre) => {
+          const array = [...pre];
+          array.splice(index, 1);
+          return array;
+        });
+        setID("");
+        setIndex("");
+        setClicked(false);
+      })
+      .catch((er) => {
+        setID("");
+        setIndex("");
+        setClicked(false);
+        toast("Unable to delete,try again", { type: "error" });
+      });
+  };
+
+  //search
+  const searchHandler = () => {
+    // setPage(1);
+    search.trim();
+    setUsers([]);
+    axios
+      .get(`${URL}users?search=${search}&page=${page}`)
+      .then((res) => {
+        // setPage(Math.ceil(+res.data.count / 20));
+        setUsers(res.data.data);
+      })
+      .catch((er) => {
+        console.log(er);
+      });
+  };
+
   return (
     <>
+      <ToastContainer />
+      <Confirmation
+        open={isDeleteClicked}
+        handleClose={() => {
+          setClicked(false);
+        }}
+        handleYes={DeleteUser}
+      />
       <Header handler={props.handler} />
       <Box component={Paper} elevation={0} square py={2} minHeight={"78vh"}>
         <Container
@@ -31,6 +133,11 @@ function Users(props) {
           </Typography>
           <Box sx={{ display: "flex", flexDirection: "row" }} my={2}>
             <TextField
+              // onKeyDown={searchHandler}
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value);
+              }}
               margin="none"
               fullWidth
               label="Search Users"
@@ -38,6 +145,7 @@ function Users(props) {
               color="info"
             ></TextField>
             <IconButton
+              onClick={searchHandler}
               size="large"
               sx={{
                 borderRadius: 1,
@@ -50,10 +158,48 @@ function Users(props) {
           </Box>
           <Divider />
           <Box py={1} mt={3}>
-            <UserRow />
-            <UserRow />
-            <UserRow />
-            <UserRow />
+            {isLoaded ? (
+              <>
+                {users.length > 0 ? (
+                  users.map((row, index) => {
+                    return (
+                      <UserRow
+                        deleteHandler={clickDelete}
+                        key={index}
+                        index={index}
+                        data={row}
+                      />
+                    );
+                  })
+                ) : (
+                  <><Typography sx={{color:"red"}}>No users found</Typography></>
+                )}
+              </>
+            ) : (
+              <>
+                <Skeleton
+                  animation="pulse"
+                  variant="rectangular"
+                  sx={{ borderRadius: 1, mb: 2 }}
+                  width={"100%"}
+                  height={50}
+                />
+                <Skeleton
+                  animation="pulse"
+                  variant="rectangular"
+                  sx={{ borderRadius: 1, mb: 2 }}
+                  width={"100%"}
+                  height={50}
+                />
+                <Skeleton
+                  animation="pulse"
+                  variant="rectangular"
+                  sx={{ borderRadius: 1, mb: 2 }}
+                  width={"100%"}
+                  height={50}
+                />
+              </>
+            )}
           </Box>
           <Box
             my={3}
@@ -64,8 +210,9 @@ function Users(props) {
             }}
           >
             <Pagination
+              onChange={handleChange}
               color="standard"
-              count={4}
+              count={count}
               variant="outlined"
               shape="rounded"
             />
@@ -85,24 +232,21 @@ const UserRow = (props) => {
       mb={1.6}
       sx={{ display: "flex", flexDirection: "row", alignItems: "center" }}
     >
-      <Avatar
-        sx={{ height: 50, width: 50 }}
-        src="https://assets.gadgets360cdn.com/pricee/assets/product/202203/BreakingBad-4_1647286045.jpg"
-      ></Avatar>
+      <Avatar sx={{ height: 50, width: 50 }} src={props.data.dp}></Avatar>
       <Box ml={2}>
         <Typography sx={{ fontSize: 13, color: "#1071bc" }}>
-          User name
+          {props.data.name}
         </Typography>
         <Typography sx={{ fontSize: 13, color: "#1071bc" }}>
-          email@email.com
+          {props.data.email}
         </Typography>
         {
           <Box sx={{ display: { xs: "block", sm: "none" } }}>
             <Typography sx={{ fontSize: 13, color: "#1071bc" }}>
-              User role
+              {props.data.role}
             </Typography>
             <Typography sx={{ fontSize: 13, color: "#1071bc" }}>
-              ID20202020
+              {props.data.ID}
             </Typography>
           </Box>
         }
@@ -110,17 +254,17 @@ const UserRow = (props) => {
       <Box sx={{ flexGrow: 1 }} />
       <Box sx={{ display: { xs: "none", sm: "block" } }}>
         <Typography sx={{ fontSize: 13, color: "#1071bc" }}>
-          User role
+          {props.data.role}
         </Typography>
         <Typography sx={{ fontSize: 13, color: "#1071bc" }}>
-          ID20202020
+          {props.data.ID}
         </Typography>
       </Box>
       <Box sx={{ flexGrow: 1 }} />
       <Box>
         <Tooltip title="edit">
           <IconButton
-            href={`/user/id`}
+            href={`/user/${props.data._id}`}
             sx={{ bgcolor: "#555", mr: 2 }}
             size="large"
           >
@@ -128,7 +272,13 @@ const UserRow = (props) => {
           </IconButton>
         </Tooltip>
         <Tooltip title="delete">
-          <IconButton sx={{ bgcolor: "#555" }} size="large">
+          <IconButton
+            onClick={() => {
+              props.deleteHandler(props.data._id, props.index);
+            }}
+            sx={{ bgcolor: "#555" }}
+            size="large"
+          >
             <DeleteIcon color="error" />
           </IconButton>
         </Tooltip>

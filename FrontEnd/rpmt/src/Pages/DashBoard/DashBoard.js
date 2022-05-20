@@ -14,9 +14,19 @@ import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import SummarizeIcon from "@mui/icons-material/Summarize";
 import ArticleIcon from "@mui/icons-material/Article";
 import AddBoxIcon from "@mui/icons-material/AddBox";
+
+//react
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 function DashBoard(props) {
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //user data
+  const { token, userID, role } = useSelector((state) => state.loging);
+
   return (
     <>
       <Header mode={props.mode} handler={props.handler} />
@@ -28,7 +38,7 @@ function DashBoard(props) {
               <Paper elevation={3}>
                 <Box p={1} sx={{ bgcolor: "#073050", borderRadius: "3px" }}>
                   <Timeline position="right">
-                    <NewSubmission />
+                    {role === "Admin" && <NewSubmission />}
                     <SingleTimelineItem icon="doc" />
                     <SingleTimelineItem />
                     <SingleTimelineItem icon="doc" />
@@ -61,7 +71,12 @@ const NewSubmission = () => {
             onClick={() => {
               navigate("/submission/new");
             }}
-            sx={{ height: "30px", width: "30px", cursor: "pointer" ,color:"#1071bc"}}
+            sx={{
+              height: "30px",
+              width: "30px",
+              cursor: "pointer",
+              color: "#1071bc",
+            }}
           />
         </TimelineDot>
         <TimelineConnector />
@@ -81,8 +96,8 @@ const NewSubmission = () => {
             display: "flex",
             alignItems: "center",
             cursor: "pointer",
-            color:"#073050",
-            textAlign:"center",
+            color: "#073050",
+            textAlign: "center",
             "&:hover": {
               bgcolor: "#888",
               color: "#fff",

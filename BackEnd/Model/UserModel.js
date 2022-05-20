@@ -66,6 +66,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
     groups: [{ type: mongoose.Schema.Types.ObjectId, ref: "Groups" }],
+    pannel: [{ type: mongoose.Schema.Types.ObjectId, ref: "Groups" }],
   },
   {
     timestamps: true,

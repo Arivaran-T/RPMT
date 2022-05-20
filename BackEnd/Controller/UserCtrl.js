@@ -59,7 +59,6 @@ exports.Login = (req, res) => {
         const result = bcrypt.compareSync(password, data.password);
 
         if (result) {
-          console.log("here" + result);
           //generate token
           const token = jwt.sign(
             { userID: data._id, email: data.email },
@@ -96,22 +95,47 @@ exports.GetUser = (req, res) => {
 
 //get all users
 exports.GetUsers = (req, res) => {
-  const { page } = req.query;
+  const { page, search } = req.query;
 
   const skip = (page - 1) * 20;
   const limit = 20;
 
-  UserModel.find(
-    {},
-    { password: 0, createdAt: 0, updatedAt: 0, __v: 0 },
-    { skip, limit }
-  )
-    .then((data) => {
-      return res.status(200).json(data);
-    })
-    .catch((er) => {
-      return res.status(404).json({ fetched: false });
-    });
+  if (search) {
+    UserModel.find(
+      { name: { $regex: "^" + search }, role: { $in: ["Staff", "Student"] } },
+      { password: 0, createdAt: 0, updatedAt: 0, __v: 0 },
+      { skip, limit }
+    )
+      .then((data) => {
+        UserModel.countDocuments({
+          name: { $regex: "^" + search },
+          role: { $in: ["Staff", "Student"] },
+        }).then((count) => {
+          console.log(data);
+          return res.status(200).json({ data, count });
+        });
+      })
+      .catch((er) => {
+        return res.status(404).json({ fetched: false });
+      });
+  } else {
+    UserModel.find(
+      { role: { $in: ["Staff", "Student"] } },
+      { password: 0, createdAt: 0, updatedAt: 0, __v: 0 },
+      { skip, limit }
+    )
+      .then((data) => {
+        UserModel.countDocuments({ role: { $in: ["Staff", "Student"] } }).then(
+          (count) => {
+            return res.status(200).json({ data, count });
+          }
+        );
+        // return res.status(200).json(data);
+      })
+      .catch((er) => {
+        return res.status(404).json({ fetched: false });
+      });
+  }
 };
 
 //update dp
@@ -158,7 +182,6 @@ exports.UpdateDp = (req, res) => {
 //remove dp
 exports.RemoveDp = (req, res) => {
   const { _id } = req.params;
-  console.log("here");
   UserModel.findByIdAndUpdate({ _id }, { dp: "" }).then((data) => {
     if (data.dp) {
       const path = data.dp.split("http://localhost:5000/")[1];
@@ -201,6 +224,10 @@ exports.UpdateUser = (req, res) => {
     address,
     DOB,
   } = req.body;
+
+  if (password) {
+    const password = bcrypt.hashSync(password, 12);
+  }
 
   UserModel.findByIdAndUpdate(
     { _id },
@@ -369,10 +396,8 @@ exports.GetGroup = (req, res) => {
   } else if (group) {
     UserModel.findById({ _id }, { groups: 1 })
       .then((data) => {
-        const groups = data.requests;
-
         GroupModel.find(
-          { _id: { $in: data.requests } },
+          { _id: { $in: data.groups } },
           {
             coSupervisor: 1,
             supervisor: 1,

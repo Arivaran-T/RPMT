@@ -1,19 +1,49 @@
 import {
   Box,
   Container,
-  FormControl,
   Grid,
   IconButton,
   Pagination,
   Paper,
+  Skeleton,
   TextField,
   Typography,
 } from "@mui/material";
 import Header from "../../Components/Header";
 import SearchIcon from "@mui/icons-material/Search";
+
+//react
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function Groups(props) {
+  //user data
+  const { userID, token } = useSelector((state) => state.loging);
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //state
+  const [isLoaded, setLoaded] = useState(false);
+  const [groups, setGroups] = useState([]);
+
+  //useEffect call
+  useEffect(() => {
+    axios
+      .get(`${URL}groups`)
+      .then((res) => {
+        setLoaded(true);
+        if (res.data) {
+          setGroups(res.data);
+        }
+      })
+      .catch((er) => {
+        setLoaded(true);
+      });
+  }, []);
+
   return (
     <>
       <Header handler={props.handler} />
@@ -47,39 +77,41 @@ function Groups(props) {
               justifyContent="center"
               alignItems={"stretch"}
               spacing={4}
-              minHeight="50vh"
+              minHeight="25vh"
             >
-              <Group />
-              <Group />
-              <Group />
-              <Group />
-              <Group />
-              <Group />
-              <Group />
+              {isLoaded ? (
+                groups.length > 0 &&
+                groups.map((row, index) => {
+                  return <Group key={index} data={row} />;
+                })
+              ) : (
+                <>
+                  <GroupSkelton />
+                  <GroupSkelton />
+                  <GroupSkelton />
+                </>
+              )}
             </Grid>
-            <Box
-              my={3}
-              sx={{
-                display: "flex",
-                flexDirection: "row",
-                justifyContent: "center",
-              }}
-            >
-              <Pagination
-                color="standard"
-                count={4}
-                variant="outlined"
-                shape="rounded"
-              />
-            </Box>
           </Box>
         </Container>
       </Box>
     </>
   );
 }
-
-const Group = () => {
+const GroupSkelton = () => {
+  return (
+    <Grid item xs={12} sm={6} md={4}>
+      <Skeleton
+        animation="pulse"
+        variant="rectangular"
+        sx={{ borderRadius: 1, mb: 2 }}
+        width={"100%"}
+        height={"100%"}
+      />
+    </Grid>
+  );
+};
+const Group = (props) => {
   const navigate = useNavigate();
   return (
     <Grid item xs={12} sm={6} md={4}>
@@ -89,24 +121,30 @@ const Group = () => {
         elevation={2}
         p={2}
         onClick={() => {
-          navigate("/groups/id");
+          navigate("/groups/" + props.data._id);
         }}
       >
         <Typography sx={{ color: "#1071bc", fontSize: 18 }}>
-          Group Name
+          {props.data.name}
         </Typography>
         <Typography sx={{ color: "#888", fontSize: 14 }}>
-          Research Topic
+          {props.data.research_Topic.name}
         </Typography>
         <Typography sx={{ color: "#ccc", fontSize: 13 }}>
-          Supervisor : <span style={{ color: "#E28743" }}>supervisor name</span>
+          Supervisor :{" "}
+          <span style={{ color: "#E28743" }}>
+            {props.data.supervisor ? props.data.supervisor.name : "N/A"}
+          </span>
         </Typography>
         <Typography sx={{ color: "#ccc", fontSize: 13 }}>
           Co-Supervisor :{" "}
-          <span style={{ color: "#E28743" }}>Co-supervisor name</span>
+          <span style={{ color: "#E28743" }}>
+            {props.data.coSupervisor ? props.data.coSupervisor.name : "N/A"}
+          </span>
         </Typography>
         <Typography sx={{ color: "#ccc", fontSize: 13 }}>
-          Student Count : <span style={{ color: "#E28743" }}>Count</span>
+          Student Count :{" "}
+          <span style={{ color: "#E28743" }}>{props.data.members.length}</span>
         </Typography>
       </Box>
     </Grid>

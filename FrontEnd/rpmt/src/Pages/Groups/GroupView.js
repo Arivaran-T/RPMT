@@ -10,13 +10,83 @@ import {
   IconButton,
   Pagination,
   Avatar,
+  Skeleton,
 } from "@mui/material";
 import Header from "../../Components/Header";
-import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
 
+//react
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useParams } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 function GroupView(props) {
+  //state
   const [pannelView, setPannelView] = useState(false);
+  const [group, setGroup] = useState();
+  const [isLoaded, setLoaded] = useState(false);
+
+  //grp id
+  const { id } = useParams();
+
+  //user data
+  const { userID, token } = useSelector((state) => state.loging);
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //use Effect call
+  useEffect(() => {
+    axios
+      .get(`${URL}groups/admin/${id}`)
+      .then((res) => {
+        setLoaded(true);
+        if (res.data) {
+          setGroup(res.data);
+        } else {
+          //handle
+        }
+      })
+      .catch((er) => {
+        setLoaded(true);
+        //handle
+      });
+  }, []);
+
+  //pannel
+  //search val
+  const [search, setSearch] = useState("");
+  const [staff, setStaff] = useState([]);
+  const [isLoadedSearch, setLoadedSearch] = useState(true);
+
+  //search  pannel
+  const searchHandler = () => {
+    setLoadedSearch(false);
+    axios
+      .get(`${URL}users/staff/staff?search=${search}`)
+      .then((res) => {
+        setLoadedSearch(true);
+        setStaff(res.data.data);
+      })
+      .catch((er) => {
+        setLoadedSearch(true);
+      });
+  };
+
+  //remove pannel
+  const removePannel = (staffid) => {
+    axios
+      .delete(`${URL}groups/pannel/${id}/${staffid}`)
+      .then((res) => {
+        toast(`${props.data.name} added to pannel`, { type: "success" });
+      })
+      .catch((er) => {
+        toast(`unable to add to pannel, try again`, { type: "error" });
+      });
+  };
 
   return (
     <>
@@ -38,142 +108,168 @@ function GroupView(props) {
           minHeight="50vh"
         >
           <Grid item xs={12} sm={6} md={4}>
-            <Box
-              component={Paper}
-              variant="outlined"
-              p={2}
-              sx={{
-                display: "Flex",
-                flexDirection: "column",
-                alignItem: "center",
-                justifyContent: "center",
-                textAlign: "center",
-              }}
-            >
-              <Typography sx={{ color: "#1071bc", fontSize: 17, mb: 2 }}>
-                Group Name
-              </Typography>
-              <Divider />
-              <Box
-                sx={{
-                  textAlign: "left",
-                  display: "flex",
-                  flexDirection: "column",
-                }}
-                py={2}
-              >
-                <Typography sx={{ color: "#888", fontSize: 16 }}>
-                  Research Topic
-                </Typography>
-                <Typography sx={{ color: "#ccc", fontSize: 15 }}>
-                  Supervisor :{" "}
-                  <span style={{ color: "#E28743" }}>supervisor name</span>
-                </Typography>
-                <Typography sx={{ color: "#ccc", fontSize: 15 }}>
-                  Co-Supervisor :{" "}
-                  <span style={{ color: "#E28743" }}>Co-supervisor name</span>
-                </Typography>
-                <Typography sx={{ color: "#ccc", fontSize: 15 }}>
-                  Student Count :{" "}
-                  <span style={{ color: "#E28743" }}>Count</span>
-                </Typography>
-                <Typography sx={{ color: "#ccc", fontSize: 15 }}>
-                  Group Leader : <span style={{ color: "#E28743" }}>Name</span>
-                </Typography>
-                <Divider sx={{ my: 3 }} />
-                <Grid container>
-                  <Grid item xs={4}>
-                    <Typography sx={{ color: "#ccc", fontSize: 15 }}>
-                      Members :
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <Typography sx={{ color: "#E28743", fontSize: 15 }}>
-                      Name
-                    </Typography>
-                    <Typography sx={{ color: "#E28743", fontSize: 15 }}>
-                      Name
-                    </Typography>
-                    <Typography sx={{ color: "#E28743", fontSize: 15 }}>
-                      Name
-                    </Typography>
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 3 }} />
-                <Grid container>
-                  <Grid item xs={4}>
-                    <Typography sx={{ color: "#ccc", fontSize: 15 }}>
-                      Pannel :
-                    </Typography>
-                  </Grid>
-                  <Grid item xs={8}>
-                    <>
-                      <Box
-                        my={1}
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Typography sx={{ color: "#E28743", fontSize: 15 }}>
-                          Name
-                        </Typography>
-                        <Button
-                          color="error"
-                          sx={{
-                            color: "red",
-                            textTransform: "none",
-                            fontWeight: "600",
-                            fontSize: 14,
-                          }}
-                        >
-                          Remove
-                        </Button>
-                      </Box>
-                      <Divider />
-                    </>
-                    <>
-                      <Box
-                        my={1}
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Typography sx={{ color: "#E28743", fontSize: 15 }}>
-                          Name
-                        </Typography>
-                        <Button
-                          color="error"
-                          sx={{
-                            color: "red",
-                            textTransform: "none",
-                            fontWeight: "600",
-                            fontSize: 14,
-                          }}
-                        >
-                          Remove
-                        </Button>
-                      </Box>
-                      <Divider />
-                    </>
-                  </Grid>
-                </Grid>
-                <Divider sx={{ my: 3 }} />
-                <Button
-                  color="success"
-                  variant="contained"
-                  href="#pannel"
-                  onClick={() => {
-                    setPannelView(true);
+            {isLoaded ? (
+              group !== undefined ? (
+                <Box
+                  component={Paper}
+                  variant="outlined"
+                  p={2}
+                  sx={{
+                    display: "Flex",
+                    flexDirection: "column",
+                    alignItem: "center",
+                    justifyContent: "center",
+                    textAlign: "center",
                   }}
                 >
-                  Add Pannel
-                </Button>
-              </Box>
-            </Box>
+                  <Typography sx={{ color: "#1071bc", fontSize: 17, mb: 2 }}>
+                    {group.name}
+                  </Typography>
+                  <Divider />
+                  <Box
+                    sx={{
+                      textAlign: "left",
+                      display: "flex",
+                      flexDirection: "column",
+                    }}
+                    py={2}
+                  >
+                    <Typography sx={{ color: "#888", fontSize: 16 }}>
+                      {group.research_Topic.name}
+                    </Typography>
+                    <Typography sx={{ color: "#ccc", fontSize: 15 }}>
+                      Supervisor :
+                      <span style={{ color: "#E28743" }}>
+                        {group.supervisor ? group.supervisor.name : "N/A"}
+                      </span>
+                    </Typography>
+                    <Typography sx={{ color: "#ccc", fontSize: 15 }}>
+                      Co-Supervisor :
+                      <span style={{ color: "#E28743" }}>
+                        {group.coSupervisor ? group.coSupervisor.name : "N/A"}
+                      </span>
+                    </Typography>
+                    <Typography sx={{ color: "#ccc", fontSize: 15 }}>
+                      Student Count :
+                      <span style={{ color: "#E28743" }}>
+                        {group.members.length}
+                      </span>
+                    </Typography>
+                    <Typography sx={{ color: "#ccc", fontSize: 15 }}>
+                      Group Leader :
+                      <span style={{ color: "#E28743" }}>
+                        {group.leader.name}
+                      </span>
+                    </Typography>
+                    <Divider sx={{ my: 3 }} />
+                    <Grid container>
+                      <Grid item xs={4}>
+                        <Typography sx={{ color: "#ccc", fontSize: 15 }}>
+                          Members :
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8}>
+                        {group.members.length > 0 &&
+                          group.members.map((row, index) => {
+                            return (
+                              <Typography
+                                key={index}
+                                sx={{ color: "#E28743", fontSize: 15 }}
+                              >
+                                {row.name}
+                              </Typography>
+                            );
+                          })}
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 3 }} />
+                    <Grid container>
+                      <Grid item xs={4}>
+                        <Typography sx={{ color: "#ccc", fontSize: 15 }}>
+                          Pannel :
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={8}>
+                        <>
+                          {group.pannel.length > 0 ? (
+                            group.pannel.map((row, index) => {
+                              return (
+                                <>
+                                  <Box
+                                    my={1}
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                    }}
+                                  >
+                                    <Typography
+                                      sx={{ color: "#E28743", fontSize: 15 }}
+                                    >
+                                      {row.name}
+                                    </Typography>
+                                    <Button
+                                      onClick={() => {
+                                        removePannel(row._id);
+                                      }}
+                                      color="error"
+                                      sx={{
+                                        color: "red",
+                                        textTransform: "none",
+                                        fontWeight: "600",
+                                        fontSize: 14,
+                                      }}
+                                    >
+                                      Remove
+                                    </Button>
+                                  </Box>
+                                  <Divider />
+                                </>
+                              );
+                            })
+                          ) : (
+                            <Typography
+                              sx={{
+                                color: "red",
+                                fontWeight: "500",
+                                fontSize: 13,
+                              }}
+                            >
+                              No Pannel assigned
+                            </Typography>
+                          )}
+                        </>
+                      </Grid>
+                    </Grid>
+                    <Divider sx={{ my: 3 }} />
+                    <Button
+                      color="success"
+                      variant="contained"
+                      href="#pannel"
+                      onClick={() => {
+                        setPannelView((pre) => !pre);
+                      }}
+                    >
+                      Add Pannel
+                    </Button>
+                  </Box>
+                </Box>
+              ) : (
+                <>
+                  <Typography>No data available</Typography>
+                </>
+              )
+            ) : (
+              <>
+                <Skeleton
+                  animation="pulse"
+                  variant="rectangular"
+                  sx={{ borderRadius: 1, mb: 2 }}
+                  width={"100%"}
+                  height={"100%"}
+                />
+              </>
+            )}
           </Grid>
           {pannelView && (
             <Grid id="pannel" item xs={12} sm={6} md={4}>
@@ -202,8 +298,14 @@ function GroupView(props) {
                     required
                     autoFocus
                     label="search"
+                    value={search}
+                    onChange={(event) => {
+                      setSearch(event.target.value);
+                    }}
+                    sx={{ fontWeight: "500" }}
                   />
                   <IconButton
+                    onClick={searchHandler}
                     sx={{
                       borderRadius: 0.5,
                       bgcolor: "#E28743",
@@ -215,26 +317,30 @@ function GroupView(props) {
                   </IconButton>
                 </Box>
                 <Box mt={2}>
-                  <Staff />
-                  <Staff />
-                  <Staff />
-                  <Staff />
-                  <Staff />
-                </Box>
-                <Box
-                  my={3}
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    justifyContent: "center",
-                  }}
-                >
-                  <Pagination
-                    color="standard"
-                    count={4}
-                    variant="outlined"
-                    shape="rounded"
-                  />
+                  {isLoadedSearch ? (
+                    staff.length > 0 ? (
+                      staff.map((row, index) => {
+                        return <Staff key={index} data={row} />;
+                      })
+                    ) : (
+                      <Typography>No mating data found</Typography>
+                    )
+                  ) : (
+                    <>
+                      {[1, 2, 3, 4, 5].map((row) => {
+                        return (
+                          <Skeleton
+                            key={row}
+                            animation="pulse"
+                            variant="rectangular"
+                            sx={{ borderRadius: 1, mb: 2 }}
+                            width={"100%"}
+                            height={40}
+                          />
+                        );
+                      })}
+                    </>
+                  )}
                 </Box>
               </Box>
             </Grid>
@@ -245,7 +351,27 @@ function GroupView(props) {
   );
 }
 
-const Staff = () => {
+const Staff = (props) => {
+  //grp id
+  const { id } = useParams();
+
+  //user data
+  const { userID, token } = useSelector((state) => state.loging);
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //add pannel
+  const addPannel = () => {
+    axios
+      .put(`${URL}groups/pannel/${id}/${props.data._id}`)
+      .then((res) => {
+        toast(`${props.data.name} added to pannel`, { type: "success" });
+      })
+      .catch((er) => {
+        toast(`unable to add to pannel, try again`, { type: "error" });
+      });
+  };
   return (
     <Box
       component={Paper}
@@ -259,14 +385,17 @@ const Staff = () => {
         justifyContent: "center",
       }}
     >
-      <Avatar src="https://www.denofgeek.com/wp-content/uploads/2021/10/Breaking-Bad-Face-Off.jpg?resize=768%2C432"></Avatar>
+      <ToastContainer />
+      <Avatar src={props.data.dp}>{props.data.name.charAt(0)}</Avatar>
       <Typography
         sx={{ color: "#1071bc", fontWeight: "600", fontSize: 16, ml: 2 }}
       >
-        Name
+        {props.data.name}
       </Typography>
       <Box sx={{ flexGrow: 1 }} />
-      <Button color="success">Add</Button>
+      <Button color="success" onClick={addPannel}>
+        Add
+      </Button>
     </Box>
   );
 };

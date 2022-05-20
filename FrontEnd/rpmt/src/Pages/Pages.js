@@ -56,7 +56,7 @@ function Pages(props) {
               element={<Groups handler={props.modeHandler} />}
             />
             <Route
-              path="/research/grp/id"
+              path="/research/grp/:id"
               element={<Group handler={props.modeHandler} />}
             />
             <Route
