@@ -21,15 +21,25 @@ const GroupSchema = new mongoose.Schema({
   supervisor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Users",
+    default: null,
   },
   coSupervisor: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Users",
+    default: null,
   },
   requests: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }],
   requested: {
-    supervisor: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
-    coSupervisor: { type: mongoose.Schema.Types.ObjectId, ref: "Users" },
+    supervisor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
+      default: null,
+    },
+    coSupervisor: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Users",
+      default: null,
+    },
   },
   pannel: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }],
   members: [{ type: mongoose.Schema.Types.ObjectId, ref: "Users" }],

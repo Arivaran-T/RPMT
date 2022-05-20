@@ -1,8 +1,37 @@
-import { Box, Container, Divider, Paper, Typography } from "@mui/material";
+import { Box, Skeleton, Container, Paper, Typography } from "@mui/material";
 import Header from "../../Components/Header";
+//react
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function SubmissionTypes(props) {
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //user data
+  const { token, userID, role } = useSelector((state) => state.loging);
+
+  //state
+  const [submissions, setSubmissions] = useState([]);
+  const [isLoaded, setLoaded] = useState(false);
+
+  //use effct call
+  useEffect(() => {
+    axios
+      .get(`${URL}submissions`)
+      .then((res) => {
+        setLoaded(true);
+        if (res.data) {
+          setSubmissions(res.data.data);
+        }
+      })
+      .catch((er) => {
+        setLoaded(true);
+      });
+  }, []);
+
   return (
     <>
       <Header handler={props.handler} />
@@ -30,9 +59,43 @@ function SubmissionTypes(props) {
                 alignItems: "center",
               }}
             >
-              <SingleSubmissionTypes />
-              <SingleSubmissionTypes />
-              <SingleSubmissionTypes />
+              {isLoaded ? (
+                submissions ? (
+                  submissions.map((row, index) => {
+                    return <SingleSubmissionTypes key={index} data={row} />;
+                  })
+                ) : (
+                  <Typography
+                    sx={{ textAlign: "center", color: "#888", mt: 3 }}
+                  >
+                    No submissions available
+                  </Typography>
+                )
+              ) : (
+                <>
+                  <Skeleton
+                    animation="pulse"
+                    variant="rectangular"
+                    sx={{ borderRadius: 1, mb: 2 }}
+                    width={"100%"}
+                    height={50}
+                  />
+                  <Skeleton
+                    animation="pulse"
+                    variant="rectangular"
+                    sx={{ borderRadius: 1, mb: 2 }}
+                    width={"100%"}
+                    height={50}
+                  />
+                  <Skeleton
+                    animation="pulse"
+                    variant="rectangular"
+                    sx={{ borderRadius: 1, mb: 2 }}
+                    width={"100%"}
+                    height={50}
+                  />
+                </>
+              )}
             </Box>
           </Box>
         </Container>
@@ -52,7 +115,7 @@ const SingleSubmissionTypes = (props) => {
       px={1}
       mb={2}
       onClick={() => {
-        navigate("/submissions/:id");
+        navigate("/submissions/" + props.data._id);
       }}
       sx={{
         cursor: "pointer",
@@ -62,11 +125,10 @@ const SingleSubmissionTypes = (props) => {
         justifyContent: "center",
       }}
     >
-      <Typography sx={{ color: "#1071bc" }}>Submission Title</Typography>
-      <Box sx={{ flexGrow: 1 }} />
-      <Typography>
-        <span style={{ color: "#E28743" }}>Total Submissions :</span> 12
+      <Typography sx={{ color: "#1071bc", ml: 2 }}>
+        {props.data.title}
       </Typography>
+      <Box sx={{ flexGrow: 1 }} />
     </Box>
   );
 };

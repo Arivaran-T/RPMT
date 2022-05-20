@@ -14,6 +14,8 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Group(props) {
   //user data
@@ -44,8 +46,22 @@ function Group(props) {
         setLoaded(true);
       });
   }, []);
+
+  //lect grp
+  const leftGroup = () => {
+    axios
+      .delete(`${URL}groups/${userID}/requests/${id}`)
+      .then((res) => {
+        toast("Successfully left group", { type: "success" });
+      })
+      .catch((er) => {
+        toast("unable to left group", { type: "error" });
+      });
+  };
+
   return (
     <>
+      <ToastContainer />
       <Header handler={props.handler} />
       <Box
         sx={{}}
@@ -180,9 +196,7 @@ function Group(props) {
                   <Button
                     color="success"
                     variant="contained"
-                    onClick={() => {
-                      //TODO
-                    }}
+                    onClick={leftGroup}
                   >
                     Remove from group
                   </Button>

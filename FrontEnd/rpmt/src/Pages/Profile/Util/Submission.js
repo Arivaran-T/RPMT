@@ -8,12 +8,12 @@ import {
   Typography,
 } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import { dateParser } from "../../../Utils/TimeFormatter";
 
-function Submission() {
-  const data = ["some", "more", "data"];
+function Submission(props) {
   return (
     <>
-      <Accordion sx={{ bgcolor: "#0F76CA" ,marginTop:2}}>
+      <Accordion sx={{ bgcolor: "#0F76CA", marginTop: 2 }}>
         <AccordionSummary expandIcon={<ExpandMoreIcon />}>
           <Typography
             sx={{
@@ -23,12 +23,12 @@ function Submission() {
               fontSize: "17px",
             }}
           >
-            Submission Name
+            {props.data.submission_id.title}
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
           <List>
-            <Divider sx={{ marginBottom: 1, }} />
+            <Divider sx={{ marginBottom: 1 }} />
             <Grid
               container
               alignItems={"center"}
@@ -37,16 +37,16 @@ function Submission() {
             >
               <Grid item xs={5}>
                 <Typography sx={{ color: "#333" }} variant="h4">
-                  Submitted date
+                  Submitted Date :
                 </Typography>
               </Grid>
               <Grid item xs={5}>
                 <Typography sx={{ color: "#333" }} variant="h4">
-                  12/2/2022 12.00PM
+                  {dateParser(props.data.submmited_date)}
                 </Typography>
               </Grid>
             </Grid>
-            <Divider sx={{ marginBottom: 1 ,marginTop:2}} />
+            <Divider sx={{ marginBottom: 1, marginTop: 2 }} />
             <Grid
               container
               alignItems={"center"}
@@ -60,11 +60,11 @@ function Submission() {
               </Grid>
               <Grid item xs={5}>
                 <Typography sx={{ color: "#333" }} variant="h4">
-                  submitted
+                  {props.data.status}
                 </Typography>
               </Grid>
             </Grid>
-            <Divider sx={{ marginBottom: 1 ,marginTop:2}} />
+            <Divider sx={{ marginBottom: 1, marginTop: 2 }} />
             <Grid
               container
               alignItems={"center"}
@@ -78,7 +78,25 @@ function Submission() {
               </Grid>
               <Grid item xs={5}>
                 <Typography sx={{ color: "#333" }} variant="h4">
-                  15
+                  {props.data.grade ? props.data.grade : "N/A"}
+                </Typography>
+              </Grid>
+            </Grid>
+            <Divider sx={{ marginBottom: 1, marginTop: 2 }} />
+            <Grid
+              container
+              alignItems={"center"}
+              justifyContent="start"
+              sx={{ textAlign: "left" }}
+            >
+              <Grid item xs={5}>
+                <Typography sx={{ color: "#333" }} variant="h4">
+                  Comments :
+                </Typography>
+              </Grid>
+              <Grid item xs={5}>
+                <Typography sx={{ color: "#333" }} variant="h4">
+                  {props.data.comments ? props.data.comments : "N/A"}
                 </Typography>
               </Grid>
             </Grid>

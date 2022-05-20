@@ -8,12 +8,21 @@ import {
   Button,
   IconButton,
   FormControl,
+  Skeleton,
 } from "@mui/material";
 import { blue } from "@mui/material/colors";
 import { makeStyles } from "@mui/styles";
 import Heading from "../../../Components/Heading";
 import SearchIcon from "@mui/icons-material/Search";
 import UserData from "../Util/UserData";
+
+//react
+import { useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const useStyle = makeStyles({
   labels: {
@@ -40,9 +49,38 @@ const useStyle = makeStyles({
 });
 
 function SearchGroup() {
+  //hook
   const classes = useStyle();
+
+  //url
+  const URL = "http://localhost:5000/api/v1/";
+
+  //user data
+  const { token, userID, role } = useSelector((state) => state.loging);
+
+  //state
+  const [groups, setGroups] = useState([]);
+  const [searchVal, setSearchVal] = useState("");
+  const [isLoaded, setLoaded] = useState(true);
+
+  //search
+  const search = () => {
+    setLoaded(false);
+    searchVal.trim();
+    axios
+      .get(`${URL}groups/searches/${searchVal}`)
+      .then((res) => {
+        setLoaded(true);
+        setGroups(res.data);
+      })
+      .catch((er) => {
+        setLoaded(true);
+      });
+  };
+
   return (
     <>
+      <ToastContainer />
       <Paper elevation={4}>
         <Box
           p={2}
@@ -51,56 +89,15 @@ function SearchGroup() {
         >
           <Heading heading="Requesting fro Group" />
           <Box my={0.5}>
-            <Grid
-              container
-              direction="column"
-              //   justifyContent={"end"}
-              alignItems="end"
-            >
-              <Grid item xs={12}>
-                <label htmlFor="name" className={classes.labels}>
-                  Search By Name
-                </label>
-                <Checkbox
-                  id="name"
-                  //   checked
-                  onChange={() => {}}
-                  defaultChecked
-                  sx={{
-                    color: blue[800],
-                    "&.Mui-checked": {
-                      color: blue[600],
-                    },
-                  }}
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <label htmlFor="area" className={classes.labels}>
-                  Search By Research Area
-                </label>
-                <Checkbox
-                  id="area"
-                  //   checked
-                  onChange={() => {}}
-                  defaultChecked
-                  sx={{
-                    color: blue[800],
-                    "&.Mui-checked": {
-                      color: blue[600],
-                    },
-                  }}
-                />
-              </Grid>
-            </Grid>
             <Box mt={2} width="100%">
               <Grid
                 container
                 direction="row"
-                justifyContent="end"
+                justifyContent="center"
                 alignItems={"center"}
                 spacing={0.6}
               >
-                <Grid item xs={9}>
+                <Grid item xs={6}>
                   <FormControl fullWidth>
                     <TextField
                       fullWidth
@@ -108,22 +105,50 @@ function SearchGroup() {
                       variant="outlined"
                       margin="none"
                       size="small"
+                      value={searchVal}
+                      onChange={(ev) => {
+                        setSearchVal(ev.target.value);
+                      }}
                       className={classes.inputs}
                       inputProps={{ className: classes.inputs }}
                     />
                   </FormControl>
                 </Grid>
-                <Grid item xs={3}>
+                <Grid item xs={2}>
                   <Box borderRadius={2} bgcolor="#1074C6">
-                    <IconButton>
+                    <IconButton onClick={search}>
                       <SearchIcon />
                     </IconButton>
                   </Box>
                 </Grid>
               </Grid>
-              <Box mt={4}/>
-              <UserData/>
-              <UserData/>
+              <Box mt={4} />
+              {isLoaded ? (
+                groups.length > 0 ? (
+                  groups.map((row, index) => {
+                    return <UserData key={index} data={row} />;
+                  })
+                ) : (
+                  <></>
+                )
+              ) : (
+                <>
+                  <Skeleton
+                    animation="pulse"
+                    variant="rectangular"
+                    sx={{ borderRadius: 1, mb: 2 }}
+                    width={"100%"}
+                    height={50}
+                  />
+                  <Skeleton
+                    animation="pulse"
+                    variant="rectangular"
+                    sx={{ borderRadius: 1, mb: 2 }}
+                    width={"100%"}
+                    height={50}
+                  />
+                </>
+              )}
             </Box>
           </Box>
         </Box>
