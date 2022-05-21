@@ -22,6 +22,7 @@ import { logout } from "../Store/auth";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import AllChatModel from "../Pages/ChatModel/AllChatModel";
 
 function Header(props) {
   //auth
@@ -104,13 +105,14 @@ function Header(props) {
           {/*user profile*/}
           {token && (
             <div>
-              <Tooltip title={"Chat"}>
+              <AllChatModel />
+              {/* <Tooltip title={"Chat"}>
                 <IconButton href="/chat" size="large" color="inherit">
                   <Badge badgeContent={1} color="error">
                     <MessageIcon fontSize="inherit" />
                   </Badge>
                 </IconButton>
-              </Tooltip>
+              </Tooltip> */}
               <Tooltip title="profile">
                 <IconButton size="large" onClick={handleMenu} color="inherit">
                   <AccountCircle fontSize="inherit" />
